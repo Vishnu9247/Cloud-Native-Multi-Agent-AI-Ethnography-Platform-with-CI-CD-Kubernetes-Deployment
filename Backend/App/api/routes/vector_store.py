@@ -1,6 +1,9 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from App.rag_utils.chroma_service import create_vector_store, add_doc, query_docs, parse_query_result, delete_collection
+from App.rag_utils.chroma_service import (
+    create_vector_store, add_doc, query_docs, 
+    parse_query_result, delete_collection,
+    add_problem)
 
 router = APIRouter()
 
@@ -18,6 +21,10 @@ class QueryDocumentsRequest(BaseModel):
     session_id: str
     query: str
 
+class ProblemStoreRequest(BaseModel):
+    session_id: str
+    problem: str
+
 @router.post('/create')
 def create_chromadb(doc: CreateVectorStoreRequest):
     create_vector_store(session_id= doc.session_id)
@@ -26,6 +33,11 @@ def create_chromadb(doc: CreateVectorStoreRequest):
 @router.post('/add_docs')
 def add_docs_to_chromadb(doc: AddDocumentRequest):
     add_doc(session_id= doc.session_id, content= doc.content)
+    return {"session_id": doc.session_id, "status": "added"}
+
+@router.post('/add_problem')
+def add_problem_to_collection(doc: ProblemStoreRequest):
+    add_problem(session_id= doc.session_id, problem= doc.problem)
     return {"session_id": doc.session_id, "status": "added"}
 
 @router.post('/get_docs')

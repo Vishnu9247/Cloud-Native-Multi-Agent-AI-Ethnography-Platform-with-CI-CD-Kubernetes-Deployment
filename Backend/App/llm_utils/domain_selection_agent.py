@@ -5,6 +5,8 @@ from langgraph.graph import StateGraph, END
 import json
 from App.prompt_utils.domain_selection_prompts import DOMAIN_SELECTION
 from App.rag_utils.chroma_service import query_docs, parse_query_result, create_vector_store
+#from App.llm_utils.llm_initialization import get_response
+
 
 
 llm = ChatOllama(model="llama3.2", temperature=0)
@@ -25,7 +27,6 @@ def domain_selection(state: AgentState) -> AgentState:
         problem = state['problem']
     )
     response = llm.invoke(prompt).content.strip()
-
     try:
         domains = json.loads(response)
 

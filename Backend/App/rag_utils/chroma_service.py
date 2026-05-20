@@ -35,6 +35,23 @@ def add_doc(session_id: str, content: str):
     )
 
 
+def add_problem(session_id: str, problem: str):
+    collection = chroma_client.get_collection(name = session_id)
+
+    doc_id = f"{session_id}_problem"
+
+    collection.add(
+        ids=[doc_id],
+        documents=[problem],
+        metadatas=[
+            {
+                "session_id": session_id
+            }
+        ],
+    )
+
+
+
 
 def query_docs(session_id: str, query: str, n_results: int = 5):
     collection = chroma_client.get_collection(session_id)

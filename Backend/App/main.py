@@ -6,6 +6,8 @@ from App.api.routes.agent_one import router as problem_framing_router
 from App.api.routes.agent_two import router as domain_selection_router
 from App.api.routes.agent_three import router as interview_router
 from App.api.routes.agent_four import router as identify_patterns
+from App.api.routes.database import router as database_operations
+
 
 
 app = FastAPI()
@@ -16,3 +18,4 @@ app.include_router(problem_framing_router, prefix = '/agent', tags = ['Problem F
 app.include_router(domain_selection_router, prefix = '/agent', tags = ['Domain Selection Agent'])
 app.include_router(interview_router, prefix= '/agent', tags= ['Interview Agent'])
 app.include_router(identify_patterns, prefix='/agent', tags = ['Pattern Identification'])
+app.include_router(database_operations, prefix= '/database', tags = ['Database'])

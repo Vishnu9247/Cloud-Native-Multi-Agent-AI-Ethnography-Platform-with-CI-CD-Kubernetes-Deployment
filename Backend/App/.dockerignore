@@ -1,0 +1,91 @@
+# Ignore everything by default
+*
+
+# =========================
+# Allow important root files
+# =========================
+!Dockerfile
+!requirements.txt
+!pyproject.toml
+!main.py
+
+# =========================
+# Allow App folder
+# =========================
+!App/
+
+# =========================
+# Allow Python source files
+# =========================
+!App/**/*.py
+
+# =========================
+# Allow package init files
+# =========================
+!App/**/__init__.py
+
+# =========================
+# Allow temp folder if needed
+# =========================
+!App/audio_utils/temp/
+
+# =========================
+# Ignore Python cache
+# =========================
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+# =========================
+# Ignore virtual environments
+# =========================
+.venv/
+venv/
+
+# =========================
+# Ignore Git files
+# =========================
+.git/
+.gitignore
+
+# =========================
+# Ignore VSCode settings
+# =========================
+.vscode/
+
+# =========================
+# Ignore logs
+# =========================
+*.log
+
+# =========================
+# Ignore environment variables
+# =========================
+.env
+
+# =========================
+# Ignore local databases
+# =========================
+*.db
+*.sqlite3
+
+# =========================
+# Ignore Chroma persistence
+# =========================
+chroma_db/
+
+# =========================
+# Ignore notebooks
+# =========================
+*.ipynb
+
+# =========================
+# Ignore test cache
+# =========================
+.pytest_cache/
+
+# =========================
+# Ignore temp folders
+# =========================
+temp/
