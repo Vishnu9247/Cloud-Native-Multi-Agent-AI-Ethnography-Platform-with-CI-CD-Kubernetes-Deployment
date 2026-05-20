@@ -77,6 +77,11 @@ export default function App() {
     navigateTo("/results", setRoute);
   }
 
+  function updateResults(nextResults) {
+    setResults(nextResults);
+    storeResults(nextResults);
+  }
+
   function goBackToInterview() {
     navigateTo("/interview", setRoute);
   }
@@ -101,7 +106,14 @@ export default function App() {
   }
 
   if (route === "results" && session && results) {
-    return <ResultsPage session={session} results={results} onEndSession={goToEnded} />;
+    return (
+      <ResultsPage
+        session={session}
+        results={results}
+        onEndSession={goToEnded}
+        onResultsUpdate={updateResults}
+      />
+    );
   }
 
   if (route === "explore" && session) {

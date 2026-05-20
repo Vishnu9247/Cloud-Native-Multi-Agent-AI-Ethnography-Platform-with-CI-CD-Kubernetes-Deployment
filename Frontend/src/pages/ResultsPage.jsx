@@ -1,14 +1,20 @@
 import { useState } from "react";
 
-import { postDeleteCollection } from "../api/client.js";
-import { clearSessionState } from "../utils/session.js";
+import { postDeleteCollection, postPatternAnalysis } from "../api/client.js";
+import { buildPatternAnalysisRequest, normalizeResultsPayload } from "../utils/results.js";
+import { clearSessionState, storeResults } from "../utils/session.js";
 import { normalizeTextList } from "../utils/text.js";
 
-export default function ResultsPage({ session, results, onEndSession }) {
+export default function ResultsPage({ session, results, onEndSession, onResultsUpdate }) {
   const [isEnding, setIsEnding] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const [message, setMessage] = useState("");
   const patterns = normalizeTextList(results?.patterns || results?.raw?.patterns);
   const recommendations = normalizeTextList(results?.recommendations || results?.raw?.recommendations);
+  const resultsContext = {
+    problem: results?.problem || results?.raw?.problem || "",
+    domains: results?.domains || results?.raw?.domains || {},
+  };
 
   async function handleEndSession() {
     if (isEnding) {
@@ -33,6 +39,28 @@ export default function ResultsPage({ session, results, onEndSession }) {
     window.print();
   }
 
+  async function handleRegenerateResults() {
+    if (isRegenerating || !resultsContext.problem) {
+      return;
+    }
+
+    setIsRegenerating(true);
+    setMessage("Regenerating patterns and recommendations...");
+
+    try {
+      const result = await postPatternAnalysis(buildPatternAnalysisRequest(session, resultsContext));
+      const nextResults = normalizeResultsPayload(result, resultsContext);
+
+      storeResults(nextResults);
+      onResultsUpdate(nextResults);
+      setMessage("Results regenerated.");
+    } catch {
+      setMessage("The backend could not regenerate results yet. Please try again.");
+    } finally {
+      setIsRegenerating(false);
+    }
+  }
+
   return (
     <main className="results-shell">
       <section className="results-hero">
@@ -42,6 +70,14 @@ export default function ResultsPage({ session, results, onEndSession }) {
           <p>{session.name}, here is what emerged from your interview.</p>
         </div>
         <div className="results-actions">
+          <button
+            className="secondary-action"
+            type="button"
+            onClick={handleRegenerateResults}
+            disabled={isRegenerating || !resultsContext.problem}
+          >
+            {isRegenerating ? "Regenerating..." : "Regenerate Results"}
+          </button>
           <button className="secondary-action" type="button" onClick={handlePrint}>
             Print Results
           </button>

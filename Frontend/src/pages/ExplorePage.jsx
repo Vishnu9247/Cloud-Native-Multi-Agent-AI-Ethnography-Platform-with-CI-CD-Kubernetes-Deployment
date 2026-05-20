@@ -12,8 +12,9 @@ import {
   extractRawDomains,
   normalizeDomains,
 } from "../utils/domains.js";
+import { buildPatternAnalysisRequest, normalizeResultsPayload } from "../utils/results.js";
 import { storeResults } from "../utils/session.js";
-import { isCompletionMessage, normalizeTextList } from "../utils/text.js";
+import { isCompletionMessage } from "../utils/text.js";
 
 export default function ExplorePage({ session, exploration, onBack, onResults }) {
   const [interviewState, setInterviewState] = useState(null);
@@ -161,21 +162,9 @@ export default function ExplorePage({ session, exploration, onBack, onResults })
     setInterviewMessage("Generating patterns and recommendations...");
 
     try {
-      const result = await postPatternAnalysis({
-        session_id: session.session_id,
-        problem,
-        domains: cloneDomainMap(rawDomains),
-        pattern_questions: [],
-        pattern_context: [],
-        patterns: [],
-        recommendations: [],
-      });
-      const nextResults = {
-        raw: result,
-        patterns: normalizeTextList(result?.patterns),
-        recommendations: normalizeTextList(result?.recommendations),
-        problem,
-      };
+      const resultsContext = { problem, domains: rawDomains };
+      const result = await postPatternAnalysis(buildPatternAnalysisRequest(session, resultsContext));
+      const nextResults = normalizeResultsPayload(result, resultsContext);
 
       storeResults(nextResults);
       onResults(nextResults);
