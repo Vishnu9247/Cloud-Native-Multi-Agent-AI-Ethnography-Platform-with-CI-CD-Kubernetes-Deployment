@@ -1,52 +1,10 @@
-import sqlite3
+from App.database_utils.data_loader import ensure_database
+from App.general_utils.logging_config import get_logger
 
 
-connection = sqlite3.connect("ethnography_ai.db")
-
-cursor = connection.cursor()
+logger = get_logger(__name__)
 
 
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS session_details (
-    session_id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    age INTEGER,
-    problem TEXT
-)
-""")
-
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS problem_conversation (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id TEXT NOT NULL,
-    domain TEXT,
-    subdomain TEXT,
-    questions TEXT,
-    answers TEXT,
-
-    FOREIGN KEY (session_id)
-    REFERENCES session_details(session_id)
-)
-""")
-
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS session_results (
-    session_id TEXT PRIMARY KEY,
-    patterns TEXT,
-    recommendations TEXT,
-
-    FOREIGN KEY (session_id)
-    REFERENCES session_details(session_id)
-)
-""")
-
-
-connection.commit()
-
-connection.close()
-
-
-print("Database and tables created successfully.")
+if __name__ == "__main__":
+    ensure_database()
+    logger.info("database_initialized")

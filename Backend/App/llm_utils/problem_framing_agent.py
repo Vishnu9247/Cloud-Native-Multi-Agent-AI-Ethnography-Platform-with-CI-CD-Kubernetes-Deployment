@@ -1,17 +1,12 @@
 from typing import List
 from typing_extensions import TypedDict
-from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, END
 
 from App.prompt_utils.problem_framing_prompts import (
     CHECK_COMPLETENESS_AND_IDENTIFY_GAPS,
     SUMMARIZE_PROBLEM,
 )
-#from App.llm_utils.llm_initialization import get_response
-
-
-
-llm = ChatOllama(model="llama3.2", temperature=0)
+from App.llm_utils.llm_client import invoke_llm
 
 
 class ChatMessage(TypedDict):
@@ -57,7 +52,7 @@ def check_completeness_and_identify_gaps(state: AgentState) -> AgentState:
         conversation_text=conversation_text,
     )
 
-    response = llm.invoke(prompt).content.strip()
+    response = invoke_llm(prompt, purpose="problem_framing.check_completeness")
     normalized_response = response.lower().strip(" .!")
 
     if normalized_response == "complete":
@@ -88,7 +83,7 @@ def summarize_problem(state: AgentState) -> AgentState:
         conversation_text=conversation_text,
     )
 
-    response = llm.invoke(prompt).content.strip()
+    response = invoke_llm(prompt, purpose="problem_framing.summarize_problem")
 
     state["summary"] = response
     state["is_complete"] = True
@@ -136,21 +131,3 @@ graph_builder.add_edge("frontend", END)
 graph_builder.add_edge("summarize_problem", END)
 
 app = graph_builder.compile()
-
-
-# if __name__ == "__main__":
-#     initial_state: AgentState = {
-#         "session_id": "session_001",
-#         "name": "Vishnu",
-#         "age": "24",
-#         "problem_conversation": [{"role": 'user',
-#                                   'content': 'I am not finding motivation to study or apply for jobs. My financial status is not good. And Yet, i am just passing time watching movies and doing courses'}],
-#         "summary": "",
-#         "is_complete": False
-#     }
-
-#     final_state = app.invoke(initial_state)
-
-#     print("\nFinal Summary")
-#     print("=" * 50)
-#     print(final_state["summary"])

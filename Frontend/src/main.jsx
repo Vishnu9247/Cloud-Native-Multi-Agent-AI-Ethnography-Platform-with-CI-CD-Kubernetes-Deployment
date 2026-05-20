@@ -64,6 +64,14 @@ async function postDeleteCollection(body) {
   return postJson("/vector/delete_collection", body);
 }
 
+async function postAddProblem(body) {
+  return postJson("/vector/add_problem", body);
+}
+
+async function postSessionDetails(body) {
+  return postJson("/database/add-session-details", body);
+}
+
 function readStoredSession() {
   try {
     const value = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
@@ -343,6 +351,7 @@ function InterviewPage({ session, onBack, onExplore }) {
   const [problem, setProblem] = useState("");
   const [conversation, setConversation] = useState([]);
   const [agentState, setAgentState] = useState(null);
+  const [hasStoredProblem, setHasStoredProblem] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSelectingDomains, setIsSelectingDomains] = useState(false);
   const [message, setMessage] = useState("");
@@ -377,6 +386,22 @@ function InterviewPage({ session, onBack, onExplore }) {
     setProblem("");
 
     try {
+      if (!hasStoredProblem) {
+        await Promise.all([
+          postAddProblem({
+            session_id: session.session_id,
+            problem: problem.trim(),
+          }),
+          postSessionDetails({
+            session_id: session.session_id,
+            name: session.name,
+            age: Number(session.age),
+            problem: problem.trim(),
+          }),
+        ]);
+        setHasStoredProblem(true);
+      }
+
       const result = await postProblemFraming({
         session_id: session.session_id,
         name: session.name,
@@ -792,6 +817,10 @@ function ResultsPage({ session, results, onEndSession }) {
     }
   }
 
+  function handlePrint() {
+    window.print();
+  }
+
   return (
     <main className="results-shell">
       <section className="results-hero">
@@ -800,9 +829,14 @@ function ResultsPage({ session, results, onEndSession }) {
           <h1>Patterns and Recommendations</h1>
           <p>{session.name}, here is what emerged from your interview.</p>
         </div>
-        <button className="danger-button" type="button" onClick={handleEndSession} disabled={isEnding}>
-          {isEnding ? "Ending..." : "End Session"}
-        </button>
+        <div className="results-actions">
+          <button className="secondary-action" type="button" onClick={handlePrint}>
+            Print Results
+          </button>
+          <button className="danger-button" type="button" onClick={handleEndSession} disabled={isEnding}>
+            {isEnding ? "Ending..." : "End Session"}
+          </button>
+        </div>
       </section>
 
       <section className="results-grid">

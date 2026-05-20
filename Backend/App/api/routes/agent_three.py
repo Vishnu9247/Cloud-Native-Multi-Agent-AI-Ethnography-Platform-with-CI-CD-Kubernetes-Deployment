@@ -6,6 +6,7 @@ from App.llm_utils.domain_interview_agent import (
     app,
     validate_user_answers
 )
+from App.database_utils.data_loader import insert_problem_conversation
 
 
 router = APIRouter()
@@ -74,6 +75,10 @@ def start_domain_interview(request: StartInterviewRequest):
 
 @router.post("/validate-domain-answer")
 def validate_domain_answer(request: ValidateAnswersRequest):
+    conversations = [
+        message.model_dump()
+        for message in request.conversations
+    ]
 
     state = {
         "session_id": request.session_id,
@@ -86,10 +91,7 @@ def validate_domain_answer(request: ValidateAnswersRequest):
         "current_subdomain": request.current_subdomain,
         "current_questions": request.current_questions,
 
-        "conversations": [
-            message.model_dump()
-            for message in request.conversations
-        ],
+        "conversations": conversations,
 
         "is_complete": False,
         "followup_message": "",
@@ -99,5 +101,22 @@ def validate_domain_answer(request: ValidateAnswersRequest):
     }
 
     result = validate_user_answers(state)
+
+    latest_answer = next(
+        (
+            message["content"]
+            for message in reversed(conversations)
+            if message.get("role") == "user"
+        ),
+        "",
+    )
+
+    insert_problem_conversation({
+        "session_id": request.session_id,
+        "domain": request.current_domain,
+        "subdomain": request.current_subdomain,
+        "questions": request.current_questions,
+        "answers": latest_answer,
+    })
 
     return result

@@ -1,15 +1,14 @@
 from typing import List, Dict
 from typing_extensions import TypedDict
-from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, END
 import json
 from App.prompt_utils.domain_selection_prompts import DOMAIN_SELECTION
 from App.rag_utils.chroma_service import query_docs, parse_query_result, create_vector_store
-#from App.llm_utils.llm_initialization import get_response
+from App.llm_utils.llm_client import invoke_llm
+from App.general_utils.logging_config import get_logger
 
 
-
-llm = ChatOllama(model="llama3.2", temperature=0)
+logger = get_logger(__name__)
 
 class ChatMessage:
     role: str
@@ -26,16 +25,16 @@ def domain_selection(state: AgentState) -> AgentState:
     prompt = DOMAIN_SELECTION.format(
         problem = state['problem']
     )
-    response = llm.invoke(prompt).content.strip()
+    response = invoke_llm(prompt, purpose="domain_selection.select_domains")
     try:
         domains = json.loads(response)
 
-    except Exception as e:
-        print("Error parsing domains:", e)
+    except Exception:
+        logger.exception("domain_selection_parse_error")
         domains = {}
 
     state['domains'] = domains
-    print(domains)
+    logger.info("domain_selection_completed session_id=%s domain_count=%s", state["session_id"], len(domains))
     return state
 
 graph = StateGraph(AgentState)

@@ -487,25 +487,34 @@ textarea:focus {
 }
 
 .primary-action,
+.secondary-action,
 .danger-button {
   min-height: 54px;
   padding: 0 24px;
   border-radius: 11px;
-  color: #ffffff;
   font-weight: 800;
   cursor: pointer;
 }
 
 .primary-action {
   margin-top: 24px;
+  color: #ffffff;
   background: #0b5fcc;
 }
 
+.secondary-action {
+  color: #0b5fcc;
+  background: #eef4ff;
+  border: 1px solid #bad0ff;
+}
+
 .danger-button {
+  color: #ffffff;
   background: #b42318;
 }
 
 .primary-action:disabled,
+.secondary-action:disabled,
 .danger-button:disabled {
   background: #c9ced7;
   cursor: not-allowed;
@@ -529,6 +538,12 @@ textarea:focus {
   justify-content: space-between;
   gap: 24px;
   padding: 30px 34px;
+}
+
+.results-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .results-hero span,
@@ -663,5 +678,35 @@ textarea:focus {
 
   .results-hero {
     display: grid;
+  }
+
+  .results-actions {
+    display: grid;
+  }
+}
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  .results-shell {
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .results-hero,
+  .results-panel {
+    box-shadow: none;
+    border: 1px solid #d8e1ef;
+  }
+
+  .results-actions,
+  .status-text {
+    display: none;
+  }
+
+  .results-grid {
+    grid-template-columns: 1fr;
   }
 }

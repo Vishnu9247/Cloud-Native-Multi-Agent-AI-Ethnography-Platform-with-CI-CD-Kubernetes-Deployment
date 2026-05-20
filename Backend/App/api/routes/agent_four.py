@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from App.llm_utils.pattern_analysis_agent import app
+from App.database_utils.data_loader import insert_session_results
 
 
 router = APIRouter()
@@ -36,5 +37,11 @@ def run_pattern_analysis(request: PatternAnalysisRequest):
     }
 
     result = app.invoke(state)
+
+    insert_session_results({
+        "session_id": request.session_id,
+        "patterns": result.get("patterns", []),
+        "recommendations": result.get("recommendations", []),
+    })
 
     return result

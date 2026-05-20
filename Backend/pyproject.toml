@@ -44,6 +44,7 @@ dependencies = [
     "python-dotenv==1.1.0",
     "python-jose[cryptography]==3.4.0",
     "requests==2.32.3",
+    "chardet==5.2.0",
     "scikit-learn==1.6.1",
     "sentence-transformers==4.1.0",
     "soundfile==0.13.1",

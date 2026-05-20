@@ -1,19 +1,16 @@
 import json
 from typing import List, Dict
 from typing_extensions import TypedDict
-from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, END
 
 from App.prompt_utils.domain_interview_prompts import DOMAIN_EXPLORER, QUERY_AND_REPHRASE
 from App.llm_utils.interview_validation_agent import app as validation_app
 from App.rag_utils.chroma_service import query_docs, parse_query_result
-#from App.llm_utils.llm_initialization import get_response
+from App.llm_utils.llm_client import invoke_llm
+from App.general_utils.logging_config import get_logger
 
 
-
-
-
-llm = ChatOllama(model="llama3.2", temperature=0)
+logger = get_logger(__name__)
 
 
 class ChatMessage(TypedDict):
@@ -69,7 +66,7 @@ def domain_explorer(state: AgentState) -> AgentState:
         subdomain=subdomain,
     )
 
-    response = llm.invoke(prompt).content.strip()
+    response = invoke_llm(prompt, purpose="domain_interview.generate_questions")
     response = clean_json_response(response)
 
     parsed_output = json.loads(response)
@@ -116,8 +113,8 @@ def query_and_rephrase(state: AgentState) -> AgentState:
 
             previous_interactions = parse_query_result(query_result)
 
-        except Exception as e:
-            print(f"Vector store query skipped: {e}")
+        except Exception:
+            logger.exception("vector_query_skipped session_id=%s", session_id)
             rephrased_questions.append(question)
             continue
 
@@ -140,7 +137,7 @@ Domain: {item["domain"]}
             context=context,
         )
 
-        rephrased_question = response = llm.invoke(prompt).content.strip()
+        rephrased_question = invoke_llm(prompt, purpose="domain_interview.rephrase_question")
         rephrased_questions.append(rephrased_question)
 
     state["current_questions"] = rephrased_questions

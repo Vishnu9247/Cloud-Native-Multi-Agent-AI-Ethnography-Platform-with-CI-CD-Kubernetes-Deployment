@@ -9,8 +9,11 @@ from faster_whisper import WhisperModel
 import numpy as np
 from fastapi import FastAPI
 
+from App.general_utils.logging_config import get_logger
+
 
 app = FastAPI()
+logger = get_logger(__name__)
 
 temp_dir = Path('temp')
 temp_dir.mkdir(exist_ok=True)
@@ -35,7 +38,7 @@ def record_audio(
         frames_per_buffer=chunk_size
     )
 
-    print('Recording started ...')
+    logger.info("audio_recording_started path=%s", audio_file_path)
 
     frames = []
     silent_chunks = 0
@@ -52,7 +55,7 @@ def record_audio(
             audio_data = np.frombuffer(data, dtype = np.int16)
             volume = np.abs(audio_data).mean()
 
-            print(f'Volume: {volume:.2f}')
+            logger.debug("audio_recording_volume volume=%.2f", volume)
 
             if volume < silence_threshold:
                 silent_chunks += 1
@@ -61,7 +64,7 @@ def record_audio(
 
 
             if silent_chunks > max_silent_chunks:
-                print('Silence detected. Stopping recording')
+                logger.info("audio_recording_silence_detected path=%s", audio_file_path)
                 break 
 
     finally:
@@ -69,7 +72,7 @@ def record_audio(
         stream.close()
         audio.terminate()
 
-    print('Recording stopped.')
+    logger.info("audio_recording_stopped path=%s frames=%s", audio_file_path, len(frames))
 
     with wave.open(str(audio_file_path), 'wb') as wf:
         wf.setnchannels(channels)

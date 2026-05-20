@@ -6,7 +6,8 @@ from pydantic import BaseModel
 from App.database_utils.data_loader import (
     insert_session_details,
     insert_problem_conversation,
-    insert_session_results
+    insert_session_results,
+    get_session_results,
 )
 
 
@@ -61,3 +62,17 @@ def add_session_results(data: SessionResults):
     return {
         "message": "Session results added successfully."
     }
+
+
+@router.get("/session-results/{session_id}")
+def read_session_results(session_id: str):
+    result = get_session_results(session_id)
+
+    if result is None:
+        return {
+            "session_id": session_id,
+            "patterns": [],
+            "recommendations": [],
+        }
+
+    return result

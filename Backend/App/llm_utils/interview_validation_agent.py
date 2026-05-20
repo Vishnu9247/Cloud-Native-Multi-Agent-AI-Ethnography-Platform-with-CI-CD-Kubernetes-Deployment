@@ -1,14 +1,14 @@
 from typing import List
 from typing_extensions import TypedDict
-from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, END
 
 from App.prompt_utils.interview_validation_prompts import IDENTIFY_GAPS, SUMMARY_PROMPT
 from App.rag_utils.chroma_service import add_doc
-#from App.llm_utils.llm_initialization import get_response
+from App.llm_utils.llm_client import invoke_llm
+from App.general_utils.logging_config import get_logger
 
 
-llm = ChatOllama(model="llama3.2", temperature=0)
+logger = get_logger(__name__)
 
 
 class ChatMessage(TypedDict):
@@ -74,7 +74,7 @@ def identify_gaps(state: ValidationState) -> ValidationState:
         conversation_text=conversation_text,
     )
 
-    response = llm.invoke(prompt).content.strip()
+    response = invoke_llm(prompt, purpose="interview_validation.identify_gaps")
 
     status = parse_validation_status(response)
 
@@ -124,7 +124,7 @@ def summarize_conversation(state: ValidationState) -> ValidationState:
         conversation_text=conversation_text,
     )
 
-    summary = llm.invoke(prompt).content.strip()
+    summary = invoke_llm(prompt, purpose="interview_validation.summarize_conversation")
 
     state["summary"] = summary
     state["is_complete"] = True
@@ -144,11 +144,15 @@ def summarize_conversation(state: ValidationState) -> ValidationState:
             content=vector_document,
         )
 
-        print("Summary added to vector store")
+        logger.info(
+            "summary_added_to_vector_store session_id=%s domain=%s subdomain=%s",
+            state["session_id"],
+            state["domain"],
+            state["subdomain"],
+        )
 
-    except Exception as e:
-        print("Failed to add summary to vector store")
-        print(e)
+    except Exception:
+        logger.exception("summary_vector_store_add_failed session_id=%s", state["session_id"])
 
     return state
 

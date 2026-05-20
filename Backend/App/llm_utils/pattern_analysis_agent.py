@@ -1,6 +1,5 @@
 from typing import List, Dict
 from typing_extensions import TypedDict
-from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, END
 import json
 
@@ -11,10 +10,11 @@ from App.prompt_utils.pattern_analysis_prompts import (
     IDENTIFY_SOLID_PATTERNS,
     GENERATE_RECOMMENDATIONS
 )
-#from App.llm_utils.llm_initialization import get_response
+from App.llm_utils.llm_client import invoke_llm
+from App.general_utils.logging_config import get_logger
 
 
-
+logger = get_logger(__name__)
 
 
 class AgentState(TypedDict):
@@ -27,9 +27,6 @@ class AgentState(TypedDict):
     recommendations: List[str]
 
 
-llm = ChatOllama(model="llama3.2", temperature=0)
-
-
 def identify_pattern_question(state: AgentState) -> AgentState:
 
     prompt = PATTERN_DISCOVERY_QUESTION_GENERATOR.format(
@@ -37,7 +34,7 @@ def identify_pattern_question(state: AgentState) -> AgentState:
         domains=state['domains']
     )
 
-    response = llm.invoke(prompt).content.strip()
+    response = invoke_llm(prompt, purpose="pattern_analysis.generate_questions")
 
     try:
         questions = json.loads(response)
@@ -45,8 +42,8 @@ def identify_pattern_question(state: AgentState) -> AgentState:
         if not isinstance(questions, list):
             questions = []
 
-    except Exception as e:
-        print("Error parsing questions:", e)
+    except Exception:
+        logger.exception("pattern_question_parse_error session_id=%s", state["session_id"])
         questions = []
 
     state['pattern_questions'] = questions
@@ -93,7 +90,7 @@ def identify_patterns(state: AgentState) -> AgentState:
         )
     )
 
-    response = llm.invoke(prompt).content.strip()
+    response = invoke_llm(prompt, purpose="pattern_analysis.identify_patterns")
 
     try:
         patterns = json.loads(response)
@@ -107,9 +104,8 @@ def identify_patterns(state: AgentState) -> AgentState:
             if isinstance(pattern, str) and pattern.strip()
         ]
 
-    except Exception as e:
-        print("Error parsing patterns:", e)
-        print("Raw response:", response)
+    except Exception:
+        logger.exception("patterns_parse_error session_id=%s raw_response=%s", state["session_id"], response)
         patterns = []
 
     state["patterns"] = patterns
@@ -132,7 +128,7 @@ def generate_recommendations(state: AgentState) -> AgentState:
             indent=2
         )
     )
-    response = llm.invoke(prompt).content.strip()
+    response = invoke_llm(prompt, purpose="pattern_analysis.generate_recommendations")
 
     try:
         recommendations = json.loads(response)
@@ -145,9 +141,8 @@ def generate_recommendations(state: AgentState) -> AgentState:
             for recommendation in recommendations
             if isinstance(recommendation, str) and recommendation.strip()
         ]
-    except Exception as e:
-        print("Error parsing recommendations:", e)
-        print("Raw response:", response)
+    except Exception:
+        logger.exception("recommendations_parse_error session_id=%s raw_response=%s", state["session_id"], response)
         recommendations = []
 
     state["recommendations"] = recommendations

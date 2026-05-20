@@ -8,3 +8,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Runtime data
+temp/
+App/logs/
+App/*.db
+App/chroma_db/
+App/audio_utils/temp/
