@@ -1,0 +1,17 @@
+.venv/
+venv/
+temp/
+
+App/.env
+App/logs/
+App/*.db
+App/chroma_db/
+App/audio_utils/temp/
+App/**/__pycache__/
+App/**/*.pyc
+
+*.ipynb
+.pytest_cache/
+.git/
+.gitignore
+.vscode/
