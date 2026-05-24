@@ -16,6 +16,7 @@ permissions:
 env:
   AWS_REGION: us-east-1
   EKS_CLUSTER_NAME: ethnography-ai-cluster
+  EKS_NODEGROUP_NAME: app-workers
   K8S_NAMESPACE: ethnography-ai
   ECR_BACKEND_REPOSITORY: ethnography/backend
   ECR_FRONTEND_REPOSITORY: ethnography/frontend
@@ -119,8 +120,68 @@ jobs:
         run: |
           set -euo pipefail
 
-          if eksctl get cluster --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}" >/dev/null 2>&1; then
-            echo "EKS cluster ${EKS_CLUSTER_NAME} already exists."
+          CLUSTER_STACK_NAME="eksctl-${EKS_CLUSTER_NAME}-cluster"
+
+          if aws eks describe-cluster --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}" >/dev/null 2>&1; then
+            CLUSTER_STATUS="$(aws eks describe-cluster \
+              --name "${EKS_CLUSTER_NAME}" \
+              --region "${AWS_REGION}" \
+              --query 'cluster.status' \
+              --output text)"
+
+            echo "EKS cluster ${EKS_CLUSTER_NAME} already exists with status ${CLUSTER_STATUS}."
+
+            if [ "${CLUSTER_STATUS}" != "ACTIVE" ]; then
+              echo "Waiting for EKS cluster ${EKS_CLUSTER_NAME} to become ACTIVE."
+              aws eks wait cluster-active --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}"
+            fi
+
+          elif aws cloudformation describe-stacks --stack-name "${CLUSTER_STACK_NAME}" --region "${AWS_REGION}" >/dev/null 2>&1; then
+            STACK_STATUS="$(aws cloudformation describe-stacks \
+              --stack-name "${CLUSTER_STACK_NAME}" \
+              --region "${AWS_REGION}" \
+              --query 'Stacks[0].StackStatus' \
+              --output text)"
+
+            echo "Found existing eksctl CloudFormation stack ${CLUSTER_STACK_NAME} with status ${STACK_STATUS}."
+
+            case "${STACK_STATUS}" in
+              CREATE_IN_PROGRESS|UPDATE_IN_PROGRESS|UPDATE_COMPLETE_CLEANUP_IN_PROGRESS)
+                echo "Waiting for existing cluster stack to finish."
+                aws cloudformation wait stack-create-complete \
+                  --stack-name "${CLUSTER_STACK_NAME}" \
+                  --region "${AWS_REGION}"
+                aws eks wait cluster-active --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}"
+                ;;
+
+              CREATE_COMPLETE|UPDATE_COMPLETE)
+                if aws eks describe-cluster --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}" >/dev/null 2>&1; then
+                  aws eks wait cluster-active --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}"
+                else
+                  echo "::error::CloudFormation stack ${CLUSTER_STACK_NAME} exists, but the EKS cluster ${EKS_CLUSTER_NAME} is not available. Check CloudFormation events in AWS."
+                  exit 1
+                fi
+                ;;
+
+              DELETE_IN_PROGRESS)
+                echo "Waiting for old cluster stack deletion to complete before creating a fresh cluster."
+                aws cloudformation wait stack-delete-complete \
+                  --stack-name "${CLUSTER_STACK_NAME}" \
+                  --region "${AWS_REGION}"
+                eksctl create cluster -f Deployment/eks-cluster.yaml
+                ;;
+
+              ROLLBACK_COMPLETE|ROLLBACK_FAILED|CREATE_FAILED|DELETE_FAILED)
+                echo "::error::The previous EKS CloudFormation stack is in ${STACK_STATUS}. Clean it up once, then rerun this workflow: eksctl delete cluster --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}"
+                exit 1
+                ;;
+
+              *)
+                echo "::error::Unsupported CloudFormation stack status ${STACK_STATUS}. Check CloudFormation events before rerunning."
+                exit 1
+                ;;
+            esac
+
           else
             echo "Creating EKS cluster ${EKS_CLUSTER_NAME}."
             eksctl create cluster -f Deployment/eks-cluster.yaml
@@ -131,6 +192,38 @@ jobs:
         run: |
           set -euo pipefail
           aws eks update-kubeconfig --region "${AWS_REGION}" --name "${EKS_CLUSTER_NAME}"
+
+      - name: Ensure EKS Node Group
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          EXISTING_NODEGROUP="$(aws eks list-nodegroups \
+            --cluster-name "${EKS_CLUSTER_NAME}" \
+            --region "${AWS_REGION}" \
+            --query "nodegroups[?@=='${EKS_NODEGROUP_NAME}'] | [0]" \
+            --output text)"
+
+          if [ "${EXISTING_NODEGROUP}" = "${EKS_NODEGROUP_NAME}" ]; then
+            NODEGROUP_STATUS="$(aws eks describe-nodegroup \
+              --cluster-name "${EKS_CLUSTER_NAME}" \
+              --nodegroup-name "${EKS_NODEGROUP_NAME}" \
+              --region "${AWS_REGION}" \
+              --query 'nodegroup.status' \
+              --output text)"
+
+            echo "Node group ${EKS_NODEGROUP_NAME} already exists with status ${NODEGROUP_STATUS}."
+
+            if [ "${NODEGROUP_STATUS}" != "ACTIVE" ]; then
+              aws eks wait nodegroup-active \
+                --cluster-name "${EKS_CLUSTER_NAME}" \
+                --nodegroup-name "${EKS_NODEGROUP_NAME}" \
+                --region "${AWS_REGION}"
+            fi
+          else
+            echo "Creating missing node group ${EKS_NODEGROUP_NAME}."
+            eksctl create nodegroup -f Deployment/eks-cluster.yaml --include="${EKS_NODEGROUP_NAME}"
+          fi
 
       - name: Apply Runtime Secrets
         shell: bash

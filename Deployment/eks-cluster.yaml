@@ -9,6 +9,9 @@ metadata:
   name: ethnography-ai-cluster
   region: us-east-1
 
+autoModeConfig:
+  enabled: false
+
 iam:
   withOIDC: true
 

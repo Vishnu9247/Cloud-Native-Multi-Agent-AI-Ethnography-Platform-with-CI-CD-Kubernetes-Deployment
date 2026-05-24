@@ -71,10 +71,11 @@ It performs this sequence:
 1. Configure AWS credentials from GitHub Secrets.
 2. Build backend and frontend Docker images.
 3. Push both images to ECR with the commit SHA and `latest` tags.
-4. Create the EKS cluster if it does not already exist.
-5. Create or update the Kubernetes Azure OpenAI secret.
-6. Apply Kubernetes manifests.
-7. Deploy the exact commit-SHA image tags and wait for rollout.
+4. Create or reuse the EKS cluster.
+5. Create or reuse the managed node group.
+6. Create or update the Kubernetes Azure OpenAI secret.
+7. Apply Kubernetes manifests.
+8. Deploy the exact commit-SHA image tags and wait for rollout.
 
 Add these GitHub Secrets:
 
@@ -84,3 +85,25 @@ Add these GitHub Secrets:
 - `AZURE_OPENAI_ENDPOINT`
 - `AZURE_OPENAI_DEPLOYMENT`
 - `AZURE_OPENAI_MODEL`
+
+## Recovering A Failed Cluster Creation
+
+If GitHub Actions fails with `AlreadyExistsException: Stack [eksctl-ethnography-ai-cluster-cluster] already exists`, AWS has a partially created eksctl CloudFormation stack.
+
+Check the stack status:
+
+```powershell
+aws cloudformation describe-stacks `
+  --region us-east-1 `
+  --stack-name eksctl-ethnography-ai-cluster-cluster `
+  --query "Stacks[0].StackStatus" `
+  --output text
+```
+
+If it is `CREATE_IN_PROGRESS`, wait and rerun the workflow. If it is `ROLLBACK_COMPLETE`, `CREATE_FAILED`, or `ROLLBACK_FAILED`, clean it up once:
+
+```powershell
+eksctl delete cluster --region us-east-1 --name ethnography-ai-cluster
+```
+
+After deletion finishes, rerun the GitHub Actions workflow.
