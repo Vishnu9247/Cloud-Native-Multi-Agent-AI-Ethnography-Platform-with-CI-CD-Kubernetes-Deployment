@@ -122,6 +122,12 @@ jobs:
 
           CLUSTER_STACK_NAME="eksctl-${EKS_CLUSTER_NAME}-cluster"
 
+          echo "AWS identity used by this workflow:"
+          aws sts get-caller-identity
+
+          echo "EKS clusters visible in ${AWS_REGION}:"
+          aws eks list-clusters --region "${AWS_REGION}" || true
+
           if aws eks describe-cluster --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}" >/dev/null 2>&1; then
             CLUSTER_STATUS="$(aws eks describe-cluster \
               --name "${EKS_CLUSTER_NAME}" \
@@ -155,10 +161,34 @@ jobs:
                 ;;
 
               CREATE_COMPLETE|UPDATE_COMPLETE)
-                if aws eks describe-cluster --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}" >/dev/null 2>&1; then
+                set +e
+                DESCRIBE_CLUSTER_OUTPUT="$(aws eks describe-cluster \
+                  --name "${EKS_CLUSTER_NAME}" \
+                  --region "${AWS_REGION}" 2>&1)"
+                DESCRIBE_CLUSTER_EXIT_CODE=$?
+                set -e
+
+                if [ "${DESCRIBE_CLUSTER_EXIT_CODE}" -eq 0 ]; then
                   aws eks wait cluster-active --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}"
                 else
-                  echo "::error::CloudFormation stack ${CLUSTER_STACK_NAME} exists, but the EKS cluster ${EKS_CLUSTER_NAME} is not available. Check CloudFormation events in AWS."
+                  echo "EKS describe-cluster output:"
+                  echo "${DESCRIBE_CLUSTER_OUTPUT}"
+
+                  echo "CloudFormation resources in ${CLUSTER_STACK_NAME}:"
+                  aws cloudformation list-stack-resources \
+                    --stack-name "${CLUSTER_STACK_NAME}" \
+                    --region "${AWS_REGION}" \
+                    --query 'StackResourceSummaries[].[LogicalResourceId,ResourceType,PhysicalResourceId,ResourceStatus]' \
+                    --output table || true
+
+                  if echo "${DESCRIBE_CLUSTER_OUTPUT}" | grep -qi "AccessDenied"; then
+                    echo "::error::The GitHub Actions AWS credentials can read CloudFormation but cannot read EKS. Add eks:DescribeCluster, eks:ListClusters, eks:ListNodegroups, eks:DescribeNodegroup, and eks:UpdateClusterConfig permissions, then rerun."
+                  elif echo "${DESCRIBE_CLUSTER_OUTPUT}" | grep -qi "ResourceNotFoundException"; then
+                    echo "::error::The eksctl CloudFormation stack is CREATE_COMPLETE, but EKS does not have cluster ${EKS_CLUSTER_NAME}. This is an orphaned/partial eksctl stack. Delete it once with: eksctl delete cluster --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}. Then rerun this workflow."
+                  else
+                    echo "::error::CloudFormation stack ${CLUSTER_STACK_NAME} exists, but EKS cluster lookup failed. Review the describe-cluster output above."
+                  fi
+
                   exit 1
                 fi
                 ;;

@@ -106,4 +106,18 @@ If it is `CREATE_IN_PROGRESS`, wait and rerun the workflow. If it is `ROLLBACK_C
 eksctl delete cluster --region us-east-1 --name ethnography-ai-cluster
 ```
 
+If it is `CREATE_COMPLETE` but the workflow says the EKS cluster is not available, check whether the AWS credentials can see EKS:
+
+```powershell
+aws eks describe-cluster `
+  --region us-east-1 `
+  --name ethnography-ai-cluster
+```
+
+If that returns `AccessDenied`, update the IAM permissions used by GitHub Actions. If it returns `ResourceNotFoundException`, the eksctl stack is orphaned and should be cleaned up once:
+
+```powershell
+eksctl delete cluster --region us-east-1 --name ethnography-ai-cluster
+```
+
 After deletion finishes, rerun the GitHub Actions workflow.
