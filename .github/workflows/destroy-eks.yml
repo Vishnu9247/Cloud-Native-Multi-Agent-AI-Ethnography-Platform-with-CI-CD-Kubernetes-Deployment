@@ -1,0 +1,139 @@
+name: Destroy EKS Cluster
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_destroy:
+        description: Type destroy to delete the EKS cluster and stop EKS billing.
+        required: true
+        type: string
+
+concurrency:
+  group: ethnography-ai-cloud-llm
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: ethnography-ai-cluster
+  K8S_NAMESPACE: ethnography-ai
+  CLUSTER_STACK_NAME: eksctl-ethnography-ai-cluster-cluster
+  NODEGROUP_STACK_NAME: eksctl-ethnography-ai-cluster-nodegroup-app-workers
+
+jobs:
+  destroy:
+    name: Destroy EKS Cluster
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Confirm Destructive Action
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ inputs.confirm_destroy }}" != "destroy" ]; then
+            echo "::error::Confirmation failed. Type destroy to run this workflow."
+            exit 1
+          fi
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install eksctl
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl --silent --location \
+            "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" \
+            | tar xz -C /tmp
+          sudo mv /tmp/eksctl /usr/local/bin/eksctl
+          eksctl version
+
+      - name: Set Up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: latest
+
+      - name: Delete Kubernetes Workloads If Cluster Exists
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if aws eks describe-cluster --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}" >/dev/null 2>&1; then
+            aws eks update-kubeconfig --region "${AWS_REGION}" --name "${EKS_CLUSTER_NAME}"
+
+            kubectl delete namespace "${K8S_NAMESPACE}" \
+              --ignore-not-found=true \
+              --wait=true \
+              --timeout=10m || true
+          else
+            echo "EKS cluster ${EKS_CLUSTER_NAME} is not available. Skipping Kubernetes namespace deletion."
+          fi
+
+      - name: Delete EKS Cluster With eksctl
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if aws eks describe-cluster --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}" >/dev/null 2>&1; then
+            eksctl delete cluster --region "${AWS_REGION}" --name "${EKS_CLUSTER_NAME}" --wait
+          else
+            echo "EKS cluster ${EKS_CLUSTER_NAME} does not exist. Checking for orphaned CloudFormation stacks."
+          fi
+
+      - name: Delete Orphaned eksctl Stacks If Present
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          delete_stack_if_present() {
+            local stack_name="$1"
+
+            if aws cloudformation describe-stacks \
+              --region "${AWS_REGION}" \
+              --stack-name "${stack_name}" >/dev/null 2>&1; then
+
+              echo "Deleting CloudFormation stack ${stack_name}."
+
+              aws cloudformation update-termination-protection \
+                --no-enable-termination-protection \
+                --region "${AWS_REGION}" \
+                --stack-name "${stack_name}" >/dev/null 2>&1 || true
+
+              aws cloudformation delete-stack \
+                --region "${AWS_REGION}" \
+                --stack-name "${stack_name}"
+
+              aws cloudformation wait stack-delete-complete \
+                --region "${AWS_REGION}" \
+                --stack-name "${stack_name}"
+            else
+              echo "CloudFormation stack ${stack_name} is not present."
+            fi
+          }
+
+          delete_stack_if_present "${NODEGROUP_STACK_NAME}"
+          delete_stack_if_present "${CLUSTER_STACK_NAME}"
+
+      - name: Confirm Shutdown
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Visible EKS clusters:"
+          aws eks list-clusters --region "${AWS_REGION}"
+
+          echo "Remaining active eksctl stacks:"
+          aws cloudformation list-stacks \
+            --region "${AWS_REGION}" \
+            --stack-status-filter CREATE_COMPLETE CREATE_IN_PROGRESS UPDATE_COMPLETE UPDATE_IN_PROGRESS DELETE_FAILED ROLLBACK_COMPLETE \
+            --query "StackSummaries[?contains(StackName, 'eksctl-${EKS_CLUSTER_NAME}')].[StackName,StackStatus]" \
+            --output table

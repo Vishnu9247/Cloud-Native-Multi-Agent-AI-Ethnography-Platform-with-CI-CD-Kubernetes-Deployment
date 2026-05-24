@@ -138,6 +138,16 @@ The workflow:
 
 ![GitHub Actions deployment](docs/images/Gitub_Actions.png)
 
+### Cost Control
+
+EKS clusters continue billing while the control plane exists. To stop EKS billing when the app is not being used, run the manual GitHub Actions workflow:
+
+```text
+Actions -> Destroy EKS Cluster
+```
+
+Type `destroy` when prompted. This removes the EKS cluster and related eksctl CloudFormation stacks while keeping the ECR repositories and Docker images. The next push to `cloud_llm` recreates the cluster and redeploys the app through the normal deployment workflow.
+
 ### Runtime Infrastructure
 
 | Layer | Technology |

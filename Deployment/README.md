@@ -89,6 +89,58 @@ Add these GitHub Secrets:
 - `AZURE_OPENAI_API_VERSION`
 - `AZURE_OPENAI_MODEL`
 
+## Cost Control: Stop EKS Billing
+
+EKS does not have a true pause button. Scaling workloads down can reduce EC2/node costs, but the EKS control plane still bills while the cluster exists. To stop EKS billing fully, delete the EKS cluster when you are done testing.
+
+Use the manual GitHub Actions workflow:
+
+```text
+Actions -> Destroy EKS Cluster -> Run workflow
+```
+
+Enter:
+
+```text
+destroy
+```
+
+The destroy workflow:
+
+1. Confirms the destructive action.
+2. Deletes the `ethnography-ai` Kubernetes namespace if the cluster is reachable.
+3. Deletes the EKS cluster with eksctl.
+4. Deletes any leftover eksctl CloudFormation nodegroup or cluster stacks.
+5. Prints remaining EKS clusters and active eksctl stacks.
+
+The ECR repositories are not deleted, so Docker images remain available. The next push to `cloud_llm` runs the deploy workflow, recreates the EKS cluster if missing, deploys the latest images, and exposes the frontend through a new LoadBalancer URL.
+
+For local cleanup, use:
+
+```powershell
+eksctl delete cluster --region us-east-1 --name ethnography-ai-cluster
+```
+
+If CloudFormation stacks are left behind, delete the nodegroup stack first and then the cluster stack:
+
+```powershell
+aws cloudformation delete-stack `
+  --region us-east-1 `
+  --stack-name eksctl-ethnography-ai-cluster-nodegroup-app-workers
+
+aws cloudformation wait stack-delete-complete `
+  --region us-east-1 `
+  --stack-name eksctl-ethnography-ai-cluster-nodegroup-app-workers
+
+aws cloudformation delete-stack `
+  --region us-east-1 `
+  --stack-name eksctl-ethnography-ai-cluster-cluster
+
+aws cloudformation wait stack-delete-complete `
+  --region us-east-1 `
+  --stack-name eksctl-ethnography-ai-cluster-cluster
+```
+
 ## Recovering A Failed Cluster Creation
 
 If GitHub Actions fails with `AlreadyExistsException: Stack [eksctl-ethnography-ai-cluster-cluster] already exists`, AWS has a partially created eksctl CloudFormation stack.
