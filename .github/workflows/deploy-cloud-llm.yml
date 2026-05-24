@@ -184,7 +184,7 @@ jobs:
                   if echo "${DESCRIBE_CLUSTER_OUTPUT}" | grep -qi "AccessDenied"; then
                     echo "::error::The GitHub Actions AWS credentials can read CloudFormation but cannot read EKS. Add eks:DescribeCluster, eks:ListClusters, eks:ListNodegroups, eks:DescribeNodegroup, and eks:UpdateClusterConfig permissions, then rerun."
                   elif echo "${DESCRIBE_CLUSTER_OUTPUT}" | grep -qi "ResourceNotFoundException"; then
-                    echo "::error::The eksctl CloudFormation stack is CREATE_COMPLETE, but EKS does not have cluster ${EKS_CLUSTER_NAME}. This is an orphaned/partial eksctl stack. Delete it once with: eksctl delete cluster --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}. Then rerun this workflow."
+                    echo "::error::The eksctl CloudFormation stack is CREATE_COMPLETE, but EKS does not have cluster ${EKS_CLUSTER_NAME}. This is an orphaned/partial eksctl stack. Delete it once with: eksctl delete cluster --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}. If eksctl cannot find the cluster, disable stack termination protection, then delete the stack: aws cloudformation update-termination-protection --no-enable-termination-protection --region ${AWS_REGION} --stack-name ${CLUSTER_STACK_NAME}; aws cloudformation delete-stack --region ${AWS_REGION} --stack-name ${CLUSTER_STACK_NAME}. Then rerun this workflow."
                   else
                     echo "::error::CloudFormation stack ${CLUSTER_STACK_NAME} exists, but EKS cluster lookup failed. Review the describe-cluster output above."
                   fi

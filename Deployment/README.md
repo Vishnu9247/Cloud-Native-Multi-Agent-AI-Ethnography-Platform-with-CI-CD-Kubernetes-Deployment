@@ -120,4 +120,21 @@ If that returns `AccessDenied`, update the IAM permissions used by GitHub Action
 eksctl delete cluster --region us-east-1 --name ethnography-ai-cluster
 ```
 
+If eksctl refuses because the EKS cluster itself does not exist, delete the orphaned CloudFormation stack directly:
+
+```powershell
+aws cloudformation update-termination-protection `
+  --no-enable-termination-protection `
+  --region us-east-1 `
+  --stack-name eksctl-ethnography-ai-cluster-cluster
+
+aws cloudformation delete-stack `
+  --region us-east-1 `
+  --stack-name eksctl-ethnography-ai-cluster-cluster
+
+aws cloudformation wait stack-delete-complete `
+  --region us-east-1 `
+  --stack-name eksctl-ethnography-ai-cluster-cluster
+```
+
 After deletion finishes, rerun the GitHub Actions workflow.
