@@ -4,6 +4,18 @@ Ethnography AI Interviewer is a cloud-deployed AI interview platform that helps 
 
 The application is designed around a multi-agent workflow. Instead of asking a fixed list of questions, it adapts to the participant's answers, chooses relevant domains to explore, validates whether answers are complete, stores context in retrieval memory, and generates a final synthesis.
 
+## Architecture
+
+![Ethnography AI Interviewer architecture](docs/images/Architecture.png)
+
+The architecture is split into three connected parts:
+
+- **Interview intelligence:** participant session, problem framing, domain selection, domain interview, validation, RAG memory, pattern analysis, and final results.
+- **Application platform:** React, Nginx, FastAPI, Python agent services, Azure OpenAI, ChromaDB, SQLite, Kubernetes networking, and persistent storage.
+- **Deployment flow:** push to `cloud_llm`, GitHub Actions build, Docker images, Amazon ECR, Amazon EKS deployment, and user access through an AWS LoadBalancer.
+
+
+
 ## What Is Ethnography?
 
 Ethnography is a qualitative research method used to understand people, behaviors, environments, routines, and decision-making in context. Rather than only asking what someone thinks, ethnography tries to understand how people actually experience a situation in everyday life.
@@ -42,16 +54,6 @@ At a high level, the system has two layers:
 - **Technology And Cloud Platform Layer:** the React frontend, FastAPI backend, Azure OpenAI, ChromaDB, SQLite, Docker, GitHub Actions, Amazon ECR, and Amazon EKS deployment.
 
 The frontend is the participant-facing interview workspace. The backend coordinates the agents, stores session data, calls Azure OpenAI, and manages retrieval memory. Kubernetes runs the frontend and backend containers in AWS, while GitHub Actions builds and deploys each new version.
-
-## Architecture
-
-![Ethnography AI Interviewer architecture](docs/images/Architecture.png)
-
-The architecture is split into three connected parts:
-
-- **Interview intelligence:** participant session, problem framing, domain selection, domain interview, validation, RAG memory, pattern analysis, and final results.
-- **Application platform:** React, Nginx, FastAPI, Python agent services, Azure OpenAI, ChromaDB, SQLite, Kubernetes networking, and persistent storage.
-- **Deployment flow:** push to `cloud_llm`, GitHub Actions build, Docker images, Amazon ECR, Amazon EKS deployment, and user access through an AWS LoadBalancer.
 
 ## Technical Implementation
 
