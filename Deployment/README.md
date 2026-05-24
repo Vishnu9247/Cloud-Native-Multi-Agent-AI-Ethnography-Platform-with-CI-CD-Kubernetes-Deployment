@@ -4,7 +4,7 @@ This project uses two deployment files because an EKS cluster is created by AWS 
 
 ## 1. Edit Placeholders
 
-Update these values before applying:-
+Update these values before applying:
 
 - `Deployment/eks-cluster.yaml`
   - `metadata.region`
