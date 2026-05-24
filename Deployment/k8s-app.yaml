@@ -73,6 +73,12 @@ spec:
                 secretKeyRef:
                   name: ethnography-backend-secrets
                   key: AZURE_OPENAI_DEPLOYMENT
+            - name: AZURE_OPENAI_API_VERSION
+              valueFrom:
+                secretKeyRef:
+                  name: ethnography-backend-secrets
+                  key: AZURE_OPENAI_API_VERSION
+                  optional: true
             - name: AZURE_OPENAI_MODEL
               valueFrom:
                 secretKeyRef:
@@ -97,6 +103,8 @@ spec:
               value: "1.5"
             - name: LLM_MAX_WORKERS
               value: "4"
+            - name: LLM_MAX_COMPLETION_TOKENS
+              value: "16384"
           volumeMounts:
             - name: backend-data
               mountPath: /data

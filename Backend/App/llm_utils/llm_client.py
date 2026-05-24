@@ -2,7 +2,7 @@ import os
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
-from openai import OpenAI
+from openai import AzureOpenAI
 
 from App.general_utils.logging_config import get_logger
 
@@ -11,8 +11,9 @@ logger = get_logger(__name__)
 
 DEFAULT_ENDPOINT = os.getenv(
     "AZURE_OPENAI_ENDPOINT",
-    "https://llm-etnography.cognitiveservices.azure.com/openai/v1/",
+    "https://ethnography-llm-endpoint.cognitiveservices.azure.com/",
 )
+DEFAULT_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview")
 DEFAULT_DEPLOYMENT = os.getenv(
     "AZURE_OPENAI_DEPLOYMENT",
     os.getenv("AZURE_OPENAI_MODEL", os.getenv("LLM_MODEL", "gpt-5.4-mini")),
@@ -20,9 +21,21 @@ DEFAULT_DEPLOYMENT = os.getenv(
 DEFAULT_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "60"))
 DEFAULT_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
 DEFAULT_BACKOFF_SECONDS = float(os.getenv("LLM_RETRY_BACKOFF_SECONDS", "1.5"))
+DEFAULT_MAX_COMPLETION_TOKENS = int(os.getenv("LLM_MAX_COMPLETION_TOKENS", "16384"))
 MAX_WORKERS = int(os.getenv("LLM_MAX_WORKERS", "4"))
 
 _executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
+
+
+def normalize_azure_endpoint(endpoint: str) -> str:
+    endpoint = endpoint.strip()
+
+    for suffix in ("/openai/v1/", "/openai/v1", "/openai/"):
+        if endpoint.endswith(suffix):
+            endpoint = endpoint[: -len(suffix)]
+            break
+
+    return endpoint.rstrip("/") + "/"
 
 
 def get_api_key() -> str:
@@ -37,8 +50,9 @@ def get_api_key() -> str:
 
 
 def create_openai_client(timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS):
-    return OpenAI(
-        base_url=DEFAULT_ENDPOINT,
+    return AzureOpenAI(
+        api_version=DEFAULT_API_VERSION,
+        azure_endpoint=normalize_azure_endpoint(DEFAULT_ENDPOINT),
         api_key=get_api_key(),
         timeout=timeout_seconds,
         max_retries=0,
@@ -51,10 +65,15 @@ def _invoke_once(prompt: str, timeout_seconds: float):
         model=DEFAULT_DEPLOYMENT,
         messages=[
             {
+                "role": "system",
+                "content": "You are an expert ethnography interview assistant. Return only the requested content.",
+            },
+            {
                 "role": "user",
                 "content": prompt,
             }
         ],
+        max_completion_tokens=DEFAULT_MAX_COMPLETION_TOKENS,
     )
 
     message = completion.choices[0].message
@@ -93,7 +112,9 @@ def invoke_llm(
             response = future.result(timeout=timeout_seconds)
             elapsed_ms = int((time.perf_counter() - started_at) * 1000)
             logger.info(
-                "llm_call_success provider=azure_openai deployment=%s purpose=%s attempt=%s elapsed_ms=%s prompt_chars=%s response_chars=%s",
+                "llm_call_success provider=azure_openai endpoint=%s api_version=%s deployment=%s purpose=%s attempt=%s elapsed_ms=%s prompt_chars=%s response_chars=%s",
+                normalize_azure_endpoint(DEFAULT_ENDPOINT),
+                DEFAULT_API_VERSION,
                 DEFAULT_DEPLOYMENT,
                 purpose,
                 attempt,
@@ -107,7 +128,9 @@ def invoke_llm(
             future.cancel()
             last_error = error
             logger.error(
-                "llm_call_timeout provider=azure_openai deployment=%s purpose=%s attempt=%s timeout_seconds=%s prompt_chars=%s",
+                "llm_call_timeout provider=azure_openai endpoint=%s api_version=%s deployment=%s purpose=%s attempt=%s timeout_seconds=%s prompt_chars=%s",
+                normalize_azure_endpoint(DEFAULT_ENDPOINT),
+                DEFAULT_API_VERSION,
                 DEFAULT_DEPLOYMENT,
                 purpose,
                 attempt,
@@ -118,7 +141,9 @@ def invoke_llm(
         except Exception as error:
             last_error = error
             logger.exception(
-                "llm_call_error provider=azure_openai deployment=%s purpose=%s attempt=%s prompt_chars=%s",
+                "llm_call_error provider=azure_openai endpoint=%s api_version=%s deployment=%s purpose=%s attempt=%s prompt_chars=%s",
+                normalize_azure_endpoint(DEFAULT_ENDPOINT),
+                DEFAULT_API_VERSION,
                 DEFAULT_DEPLOYMENT,
                 purpose,
                 attempt,

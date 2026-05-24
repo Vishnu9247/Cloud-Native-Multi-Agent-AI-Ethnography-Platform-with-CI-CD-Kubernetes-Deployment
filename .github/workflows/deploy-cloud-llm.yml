@@ -261,6 +261,7 @@ jobs:
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
           AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
           AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+          AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
           AZURE_OPENAI_MODEL: ${{ secrets.AZURE_OPENAI_MODEL }}
         run: |
           set -euo pipefail
@@ -275,6 +276,7 @@ jobs:
             --from-literal=AZURE_OPENAI_API_KEY="${AZURE_OPENAI_API_KEY}" \
             --from-literal=AZURE_OPENAI_ENDPOINT="${AZURE_OPENAI_ENDPOINT}" \
             --from-literal=AZURE_OPENAI_DEPLOYMENT="${AZURE_OPENAI_DEPLOYMENT}" \
+            --from-literal=AZURE_OPENAI_API_VERSION="${AZURE_OPENAI_API_VERSION:-2024-12-01-preview}" \
             --from-literal=AZURE_OPENAI_MODEL="${AZURE_OPENAI_MODEL}" \
             --from-literal=LLM_MODEL="${AZURE_OPENAI_MODEL}" \
             --dry-run=client \

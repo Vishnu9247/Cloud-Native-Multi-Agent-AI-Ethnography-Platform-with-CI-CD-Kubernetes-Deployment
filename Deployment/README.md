@@ -32,7 +32,9 @@ kubectl create secret generic ethnography-backend-secrets `
   --namespace ethnography-ai `
   --from-literal=AZURE_OPENAI_API_KEY="<your-key>" `
   --from-literal=AZURE_OPENAI_ENDPOINT="<your-endpoint>" `
-  --from-literal=AZURE_OPENAI_DEPLOYMENT="gpt-5.4-mini"
+  --from-literal=AZURE_OPENAI_DEPLOYMENT="gpt-5.4-mini" `
+  --from-literal=AZURE_OPENAI_API_VERSION="2024-12-01-preview" `
+  --from-literal=AZURE_OPENAI_MODEL="gpt-5.4-mini"
 ```
 
 ## 4. Deploy The App
@@ -84,6 +86,7 @@ Add these GitHub Secrets:
 - `AZURE_OPENAI_API_KEY`
 - `AZURE_OPENAI_ENDPOINT`
 - `AZURE_OPENAI_DEPLOYMENT`
+- `AZURE_OPENAI_API_VERSION`
 - `AZURE_OPENAI_MODEL`
 
 ## Recovering A Failed Cluster Creation
