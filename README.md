@@ -1,138 +1,153 @@
 # Ethnography AI Interviewer
 
-Ethnography AI Interviewer is a cloud-deployed, multi-agent qualitative interview application. It guides a participant from an initial problem statement through adaptive domain exploration, answer validation, pattern discovery, and personalized recommendations.
+Ethnography AI Interviewer is a cloud-deployed AI interview platform that helps people describe a problem, explore the surrounding life context, and receive patterns and recommendations from a structured qualitative interview.
 
-The system combines a React interview interface, a FastAPI backend, Azure OpenAI agents, ChromaDB retrieval memory, SQLite session persistence, Docker containers, GitHub Actions CI/CD, Amazon ECR, and Amazon EKS.
+The application is designed around a multi-agent workflow. Instead of asking a fixed list of questions, it adapts to the participant's answers, chooses relevant domains to explore, validates whether answers are complete, stores context in retrieval memory, and generates a final synthesis.
 
-## Product Walkthrough
+## What Is Ethnography?
 
-### 1. Create A Session
+Ethnography is a qualitative research method used to understand people, behaviors, environments, routines, and decision-making in context. Rather than only asking what someone thinks, ethnography tries to understand how people actually experience a situation in everyday life.
 
-The participant starts by entering their name and age. The frontend creates a unique `session_id`, and the backend prepares a session-specific vector collection.
+In a traditional ethnographic interview, a researcher might ask open-ended questions such as:
 
-![Session creation](Frontend/Images/Welcome01.png)
+- What usually happens when this problem appears?
+- What routines, pressures, or environments shape the behavior?
+- What makes the problem easier or harder to manage?
+- What emotions, constraints, or social factors are involved?
 
-After the session is created, the user sees their generated session ID and can begin the interview.
+This project brings that style of inquiry into an AI-assisted application. The goal is not to replace the researcher, but to make exploratory interviews more structured, adaptive, and easier to analyze.
 
-![Session confirmation](Frontend/Images/Welcome02.png)
+## What This Project Does
 
-### 2. Explore Domains And Subdomains
+The app guides a participant through an end-to-end interview:
 
-After the problem-framing stage, the system selects relevant domains and subdomains to explore. The exploration screen uses a lean progress timeline on the left and a side-by-side question/answer workspace on the right.
+1. The participant enters their name and age.
+2. The app creates a unique `session_id`.
+3. The backend creates a temporary ChromaDB collection for that session.
+4. The participant describes the problem they want to explore.
+5. A problem-framing agent asks clarifying questions until the problem is clear.
+6. A domain-selection agent chooses relevant domains and subdomains.
+7. A domain-interview agent generates questions for each active subdomain.
+8. A validation agent checks answers and asks follow-up questions when needed.
+9. Completed summaries are stored in retrieval memory.
+10. A pattern-analysis agent generates patterns and recommendations.
+11. The user can regenerate results, print them, or end the session.
+12. Ending the session deletes the temporary ChromaDB collection.
 
-Each hollow circle represents a domain or subdomain. Completed items turn green, making interview progress visible without taking too much screen space.
+## How The App Works
 
-![Domain exploration](Frontend/Images/WebUI1.png)
+At a high level, the system has two layers:
 
-### 3. Generate Patterns And Recommendations
+- **AI Interview Intelligence Layer:** the multi-agent interview process, RAG memory, validation, pattern extraction, and recommendations.
+- **Technology And Cloud Platform Layer:** the React frontend, FastAPI backend, Azure OpenAI, ChromaDB, SQLite, Docker, GitHub Actions, Amazon ECR, and Amazon EKS deployment.
 
-When all selected domains and subdomains are complete, the user can generate results. The results page separates inferred patterns from actionable recommendations, and includes controls to regenerate, print, or end the session.
+The frontend is the participant-facing interview workspace. The backend coordinates the agents, stores session data, calls Azure OpenAI, and manages retrieval memory. Kubernetes runs the frontend and backend containers in AWS, while GitHub Actions builds and deploys each new version.
 
-![Patterns and recommendations](Frontend/Images/WebUI2.png)
+## Architecture
 
-### 4. End The Session
+![Ethnography AI Interviewer architecture](docs/images/Architecture.png)
 
-When the session ends, the backend deletes the session's temporary ChromaDB vector collection. The participant can start a new session from the closing screen.
+The architecture is split into three connected parts:
 
-![Session ended](Frontend/Images/WebUI3.png)
+- **Interview intelligence:** participant session, problem framing, domain selection, domain interview, validation, RAG memory, pattern analysis, and final results.
+- **Application platform:** React, Nginx, FastAPI, Python agent services, Azure OpenAI, ChromaDB, SQLite, Kubernetes networking, and persistent storage.
+- **Deployment flow:** push to `cloud_llm`, GitHub Actions build, Docker images, Amazon ECR, Amazon EKS deployment, and user access through an AWS LoadBalancer.
 
-### 5. Azure OpenAI Usage
+## Technical Implementation
 
-The backend uses an Azure OpenAI deployment for all agent reasoning. Azure metrics show request and token usage for the `gpt-5.4-mini` deployment.
+### Frontend
 
-![Azure OpenAI metrics](Frontend/Images/WebUI4.png)
+The frontend is built with React and Vite. It provides the participant-facing workflow:
 
-## What The Project Solves
+- Welcome and session creation.
+- Problem-framing input.
+- Domain and subdomain exploration.
+- Question and answer workspace.
+- Results page with regenerate, print, and end-session actions.
 
-Traditional qualitative interviews often rely on fixed questionnaires. That makes it hard to adapt to a participant's lived experience, notice gaps in answers, or connect insights across the full session.
+In production, the React app is served by Nginx. Nginx also proxies `/api` calls to the backend service inside Kubernetes.
 
-This project solves that by using AI agents that:
+### Backend
 
-- Clarify the participant's initial problem.
-- Select the most relevant domains for exploration.
-- Ask targeted questions for each domain and subdomain.
-- Validate answers and ask follow-up questions when needed.
-- Store useful summaries in retrieval memory.
-- Generate final patterns and recommendations from the full interview.
-- Record session data so results can be reviewed or printed.
+The backend is built with Python and FastAPI. It exposes routes for:
 
-## Core User Flow
+- Agent workflows.
+- ChromaDB vector-store operations.
+- SQLite database operations.
+- Health checks and service coordination.
 
-```mermaid
-flowchart LR
-    A["Name + Age"] --> B["Create Session ID"]
-    B --> C["Create ChromaDB Collection"]
-    C --> D["Submit Problem"]
-    D --> E["Problem Framing Agent"]
-    E --> F["Domain Selection Agent"]
-    F --> G["Domain Interview Agent"]
-    G --> H["Validation + Follow-ups"]
-    H --> I{"More Subdomains?"}
-    I -- Yes --> G
-    I -- No --> J["Pattern Analysis Agent"]
-    J --> K["Patterns + Recommendations"]
-    K --> L["Print / Regenerate / End Session"]
+FastAPI receives JSON payloads from the frontend, validates them with Pydantic models, invokes the appropriate agent workflow, and returns structured JSON responses.
+
+### Multi-Agent Workflow
+
+The backend uses focused agents instead of one large prompt.
+
+| Agent | Responsibility | Route |
+| --- | --- | --- |
+| Problem Framing Agent | Clarifies the user's problem and determines whether follow-up context is needed. | `POST /agent/problem-framing` |
+| Domain Selection Agent | Selects relevant domains and subdomains for exploration. | `POST /agent/domain-selection` |
+| Domain Interview Agent | Generates questions for the current domain and subdomain. | `POST /agent/start-domain-interview` |
+| Validation Agent | Checks whether answers are complete and generates follow-up questions if needed. | `POST /agent/validate-domain-answer` |
+| Pattern Analysis Agent | Generates final patterns and recommendations. | `POST /agent/pattern-analysis` |
+
+Each agent receives a state object, updates the state, and returns the next step to the frontend.
+
+### RAG And Memory
+
+The project uses retrieval-augmented generation to preserve useful context across the interview.
+
+| Memory Type | Technology | Purpose |
+| --- | --- | --- |
+| Vector memory | ChromaDB | Stores the initial problem and completed subdomain summaries for semantic retrieval. |
+| Structured memory | SQLite | Stores session details, conversations, patterns, and recommendations. |
+
+Each session has its own ChromaDB collection. This keeps session context isolated and allows cleanup when the user ends the session.
+
+### Azure OpenAI
+
+The backend uses Azure OpenAI through the Azure-specific `AzureOpenAI` client. Runtime configuration is provided through Kubernetes secrets.
+
+Recommended values:
+
+```text
+AZURE_OPENAI_ENDPOINT=https://ethnography-llm-endpoint.cognitiveservices.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-5.4-mini
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
+AZURE_OPENAI_MODEL=gpt-5.4-mini
 ```
 
-## Multi-Agent Architecture
+Azure metrics are used to monitor request volume and token usage.
 
-The backend is organized around specialized agents. Each agent owns a clear step in the interview workflow.
+![Azure OpenAI metrics](docs/images/WebUI4.png)
 
-| Agent | Purpose | Route |
-| --- | --- | --- |
-| Problem Framing Agent | Clarifies the user's initial problem and decides whether more context is needed. | `POST /agent/problem-framing` |
-| Domain Selection Agent | Selects domains and subdomains that should be explored for the framed problem. | `POST /agent/domain-selection` |
-| Domain Interview Agent | Generates questions for the active domain and subdomain. | `POST /agent/start-domain-interview` |
-| Validation Agent | Validates the user's answer and generates follow-up questions if the answer is incomplete. | `POST /agent/validate-domain-answer` |
-| Pattern Analysis Agent | Synthesizes completed interview context into patterns and recommendations. | `POST /agent/pattern-analysis` |
+### CI/CD And Cloud Deployment
 
-The agents use LangGraph-style state transitions and call Azure OpenAI through the `AzureOpenAI` client.
+The project deploys automatically through GitHub Actions when code is pushed to the `cloud_llm` branch.
 
-## RAG And Memory Design
+The workflow:
 
-The system uses two memory layers.
+1. Configures AWS credentials from GitHub Secrets.
+2. Builds the backend Docker image.
+3. Builds the frontend Docker image.
+4. Pushes both images to Amazon ECR.
+5. Creates or reuses the Amazon EKS cluster.
+6. Creates or updates Kubernetes secrets.
+7. Applies Kubernetes manifests.
+8. Updates the backend and frontend deployments.
+9. Waits for rollout and prints the frontend service.
 
-| Memory Layer | Technology | Purpose |
-| --- | --- | --- |
-| Vector memory | ChromaDB | Stores the user's problem and completed subdomain summaries for retrieval-augmented agent prompts. |
-| Structured memory | SQLite | Stores session details, interview conversations, patterns, and recommendations for review and printing. |
+![GitHub Actions deployment](docs/images/Gitub_Actions.png)
 
-Each session gets its own ChromaDB collection. When the session ends, that collection is deleted to clean up temporary vector memory.
+### Runtime Infrastructure
 
-## Data Flow
-
-```mermaid
-flowchart LR
-    User["Participant"] --> React["React Frontend"]
-    React --> Nginx["Nginx /api Proxy"]
-    Nginx --> FastAPI["FastAPI Backend"]
-
-    FastAPI --> Agents["Agent Layer"]
-    Agents --> Azure["Azure OpenAI gpt-5.4-mini"]
-
-    FastAPI --> VectorRoutes["Vector Store Routes"]
-    VectorRoutes --> Chroma["ChromaDB Session Collection"]
-
-    FastAPI --> DatabaseRoutes["Database Routes"]
-    DatabaseRoutes --> SQLite["SQLite Session Database"]
-
-    Chroma --> Agents
-    SQLite --> Agents
-    Agents --> Results["Patterns + Recommendations"]
-    Results --> React
-```
-
-## Technology Stack
-
-| Area | Technology |
+| Layer | Technology |
 | --- | --- |
-| Frontend | React, Vite, CSS |
-| Frontend runtime | Nginx static hosting and `/api` reverse proxy |
+| Frontend UI | React, Vite |
+| Frontend runtime | Nginx |
 | Backend API | Python, FastAPI, Pydantic |
-| Agent orchestration | LangGraph-style state graphs |
+| Agent logic | Python agent workflows |
 | LLM provider | Azure OpenAI / Azure AI Foundry |
-| Model deployment | `gpt-5.4-mini` |
-| Vector database | ChromaDB |
+| Vector memory | ChromaDB |
 | Structured database | SQLite |
 | Containers | Docker |
 | Registry | Amazon ECR |
@@ -141,30 +156,24 @@ flowchart LR
 | CI/CD | GitHub Actions |
 | Secrets | GitHub Secrets and Kubernetes Secrets |
 
-## Cloud Architecture
+## API Overview
 
-```mermaid
-flowchart LR
-    Push["Push to cloud_llm"] --> Actions["GitHub Actions"]
-    Actions --> BackendImage["Build Backend Image"]
-    Actions --> FrontendImage["Build Frontend Image"]
-
-    BackendImage --> ECRBackend["ECR: ethnography/backend"]
-    FrontendImage --> ECRFrontend["ECR: ethnography/frontend"]
-
-    Actions --> EKS["Amazon EKS"]
-    EKS --> FrontendPods["Frontend Pods: React + Nginx"]
-    EKS --> BackendPods["Backend Pod: FastAPI"]
-
-    FrontendPods --> LoadBalancer["AWS LoadBalancer"]
-    LoadBalancer --> Browser["User Browser"]
-
-    BackendPods --> Secrets["Kubernetes Secrets"]
-    BackendPods --> PVC["EBS Persistent Volume"]
-    PVC --> Chroma["ChromaDB"]
-    PVC --> SQLite["SQLite"]
-    BackendPods --> Azure["Azure OpenAI"]
-```
+| Route | Purpose |
+| --- | --- |
+| `POST /vector/create` | Creates a ChromaDB collection for a session. |
+| `POST /vector/add_problem` | Stores the user's initial problem in vector memory. |
+| `POST /vector/add_docs` | Stores completed subdomain summaries. |
+| `POST /vector/get_docs` | Retrieves relevant context from ChromaDB. |
+| `POST /vector/delete_collection` | Deletes the session's temporary vector collection. |
+| `POST /database/add-session-details` | Records participant and session metadata. |
+| `POST /database/add-problem-conversation` | Records answers for domains and subdomains. |
+| `POST /database/add-session-results` | Stores final patterns and recommendations. |
+| `GET /database/session-results/{session_id}` | Retrieves saved session results. |
+| `POST /agent/problem-framing` | Runs the problem-framing agent. |
+| `POST /agent/domain-selection` | Runs the domain-selection agent. |
+| `POST /agent/start-domain-interview` | Starts the domain interview workflow. |
+| `POST /agent/validate-domain-answer` | Validates answers and returns follow-ups or completion. |
+| `POST /agent/pattern-analysis` | Generates final patterns and recommendations. |
 
 ## Repository Structure
 
@@ -172,55 +181,34 @@ flowchart LR
 Ethnography-AI-Interviewer/
   Backend/
     App/
-      api/routes/          FastAPI routes for agents, vector store, and database
+      api/routes/          FastAPI route handlers
       database_utils/      SQLite persistence
-      general_utils/       Logging configuration
+      general_utils/       Logging utilities
       llm_utils/           Agent workflows and Azure OpenAI client
       prompt_utils/        Prompt templates
       rag_utils/           ChromaDB service
-      main.py              FastAPI application entrypoint
-      Dockerfile           Backend Docker image
+      main.py              FastAPI entrypoint
+      Dockerfile           Backend image definition
   Frontend/
-    Images/                README and UI screenshots
     src/
-      api/                 Frontend API client
-      components/          Domain progress components
-      pages/               Welcome, interview, explore, results, end pages
+      api/                 API client
+      components/          Reusable UI components
+      pages/               App screens
       utils/               Session, domain, result, and text helpers
-    Dockerfile             Frontend Docker image
-    nginx.conf.template    Nginx static hosting and proxy config
+    Dockerfile             Frontend image definition
+    nginx.conf.template    Nginx config template
   Deployment/
-    eks-cluster.yaml       EKS cluster definition for eksctl
-    k8s-app.yaml           Kubernetes manifests
-    README.md              Deployment and recovery guide
+    eks-cluster.yaml       EKS cluster config
+    k8s-app.yaml           Kubernetes app manifests
+    README.md              Deployment guide
+  docs/images/             README images and screenshots
   .github/workflows/
     deploy-cloud-llm.yml   CI/CD workflow
 ```
 
-## API Overview
+## Required Secrets
 
-| Route | Description |
-| --- | --- |
-| `POST /vector/create` | Creates a ChromaDB collection for the session. |
-| `POST /vector/add_problem` | Stores the user's initial problem in vector memory. |
-| `POST /vector/add_docs` | Stores completed subdomain summaries. |
-| `POST /vector/get_docs` | Retrieves relevant session context. |
-| `POST /vector/delete_collection` | Deletes the temporary session vector collection. |
-| `POST /database/add-session-details` | Records participant/session metadata. |
-| `POST /database/add-problem-conversation` | Records domain/subdomain answers. |
-| `POST /database/add-session-results` | Records final patterns and recommendations. |
-| `GET /database/session-results/{session_id}` | Reads saved results for a session. |
-| `POST /agent/problem-framing` | Runs the problem framing agent. |
-| `POST /agent/domain-selection` | Runs the domain selection agent. |
-| `POST /agent/start-domain-interview` | Starts or advances the domain interview. |
-| `POST /agent/validate-domain-answer` | Validates answers and returns follow-up questions or completion. |
-| `POST /agent/pattern-analysis` | Generates final patterns and recommendations. |
-
-## Environment Variables And Secrets
-
-The backend expects Azure OpenAI values from environment variables. In Kubernetes, the GitHub Actions workflow writes them into the `ethnography-backend-secrets` secret.
-
-Required GitHub repository secrets:
+GitHub Actions expects these repository secrets:
 
 ```text
 AWS_ACCESS_KEY_ID
@@ -232,21 +220,7 @@ AZURE_OPENAI_API_VERSION
 AZURE_OPENAI_MODEL
 ```
 
-Recommended Azure values:
-
-```text
-AZURE_OPENAI_ENDPOINT=https://ethnography-llm-endpoint.cognitiveservices.azure.com/
-AZURE_OPENAI_DEPLOYMENT=gpt-5.4-mini
-AZURE_OPENAI_API_VERSION=2024-12-01-preview
-AZURE_OPENAI_MODEL=gpt-5.4-mini
-```
-
-Runtime storage variables used in Kubernetes:
-
-```text
-DATABASE_PATH=/data/ethnography_ai.db
-CHROMA_DB_PATH=/data/chroma_db
-```
+Kubernetes injects these values into the backend through the `ethnography-backend-secrets` secret.
 
 ## Local Development
 
@@ -265,58 +239,24 @@ npm install
 npm run dev
 ```
 
-The Vite development server proxies `/api` requests to the local backend.
+The Vite development server proxies `/api` calls to the local backend.
 
-## Docker
+## Web App Gallery
 
-Build the backend image:
+### Domain Exploration
 
-```bash
-docker build -t ethnography/backend:local Backend/App
-```
+The exploration screen shows the selected domains and subdomains in a left-side progress timeline. The active subdomain appears in the main workspace with generated questions and a large answer box.
 
-Build the frontend image:
+![Domain exploration](docs/images/WebUI1.png)
 
-```bash
-docker build -t ethnography/frontend:local Frontend
-```
+### Results Page
 
-The frontend container serves the React build through Nginx and proxies `/api` requests to the backend service.
+The results page separates inferred behavioral patterns from practical recommendations. Users can regenerate, print, or end the session.
 
-## Deployment
+![Patterns and recommendations](docs/images/WebUI2.png)
 
-The project deploys automatically through GitHub Actions:
+### End Session
 
-```text
-.github/workflows/deploy-cloud-llm.yml
-```
+The final screen confirms that the session is closed and allows the participant to start again.
 
-The workflow runs on every push to `cloud_llm`.
-
-It performs this sequence:
-
-1. Configures AWS credentials.
-2. Builds backend and frontend Docker images.
-3. Pushes images to Amazon ECR.
-4. Creates or reuses the EKS cluster.
-5. Creates or updates Kubernetes secrets.
-6. Applies Kubernetes manifests.
-7. Deploys the new image tags.
-8. Waits for rollout.
-9. Prints the frontend LoadBalancer service.
-
-See [Deployment/README.md](Deployment/README.md) for EKS setup and recovery notes.
-
-## Screenshot Gallery
-
-| Screen | Image |
-| --- | --- |
-| Welcome form | ![Welcome form](Frontend/Images/Welcome01.png) |
-| Session confirmation | ![Session confirmation](Frontend/Images/Welcome02.png) |
-| Domain exploration | ![Domain exploration](Frontend/Images/WebUI1.png) |
-| Results page | ![Results page](Frontend/Images/WebUI2.png) |
-| End session page | ![End session page](Frontend/Images/WebUI3.png) |
-| Azure metrics | ![Azure metrics](Frontend/Images/WebUI4.png) |
-| Interview complete state | ![Interview complete state](<Frontend/Images/Web__UI 1.png>) |
-| Earlier results view | ![Earlier results view](Frontend/Images/Web__UI2.png) |
-| Earlier end screen | ![Earlier end screen](Frontend/Images/Web__UI3.png) |
+![Session ended](docs/images/WebUI3.png)
