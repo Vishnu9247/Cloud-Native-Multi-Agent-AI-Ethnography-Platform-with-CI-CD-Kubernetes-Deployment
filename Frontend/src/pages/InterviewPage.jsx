@@ -99,8 +99,9 @@ export default function InterviewPage({ session, onBack, onExplore }) {
       } else {
         setMessage("Please answer the follow-up questions so I can understand the problem better.");
       }
-    } catch {
-      setMessage("The backend did not accept the problem yet. Please check the agent route and try again.");
+    } catch (error) {
+      console.error("Problem framing failed", error);
+      setMessage(error?.message || "The backend did not accept the problem yet. Please check the agent route and try again.");
     } finally {
       setIsSubmitting(false);
     }

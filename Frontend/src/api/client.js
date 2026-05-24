@@ -1,6 +1,31 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 const DEFAULT_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS || 240000);
 
+function formatErrorMessage(path, status, responseText) {
+  if (!responseText) {
+    return `${path} failed with status ${status}`;
+  }
+
+  try {
+    const parsed = JSON.parse(responseText);
+    const detail = parsed.detail || parsed.message || parsed.error;
+
+    if (typeof detail === "string") {
+      return `${path} failed with status ${status}: ${detail}`;
+    }
+
+    if (Array.isArray(detail)) {
+      return `${path} failed with status ${status}: ${detail
+        .map((item) => item.msg || item.message || JSON.stringify(item))
+        .join("; ")}`;
+    }
+
+    return `${path} failed with status ${status}: ${JSON.stringify(parsed)}`;
+  } catch {
+    return `${path} failed with status ${status}: ${responseText}`;
+  }
+}
+
 export async function postJson(path, body, options = {}) {
   const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const controller = new AbortController();
@@ -18,8 +43,9 @@ export async function postJson(path, body, options = {}) {
 
     if (!response.ok) {
       const message = await response.text();
-      const error = new Error(message || `Request failed with status ${response.status}`);
+      const error = new Error(formatErrorMessage(path, response.status, message));
       error.status = response.status;
+      error.responseText = message;
       throw error;
     }
 
