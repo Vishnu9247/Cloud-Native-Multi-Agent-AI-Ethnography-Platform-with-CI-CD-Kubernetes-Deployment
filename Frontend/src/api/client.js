@@ -1,28 +1,44 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+const DEFAULT_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS || 240000);
 
-export async function postJson(path, body) {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+export async function postJson(path, body, options = {}) {
+  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
 
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Request failed with status ${response.status}`);
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      const error = new Error(message || `Request failed with status ${response.status}`);
+      error.status = response.status;
+      throw error;
+    }
+
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  } finally {
+    window.clearTimeout(timeoutId);
   }
-
-  const text = await response.text();
-  return text ? JSON.parse(text) : null;
 }
 
 export async function postProblemFraming(body) {
   try {
     return await postJson("/agent/problem-framing", body);
-  } catch {
-    return postJson("/problem-framing", body);
+  } catch (error) {
+    if (error?.status === 404) {
+      return postJson("/problem-framing", body);
+    }
+
+    throw error;
   }
 }
 

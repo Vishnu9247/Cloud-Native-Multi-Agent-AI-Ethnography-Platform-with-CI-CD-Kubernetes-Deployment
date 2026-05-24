@@ -1,0 +1,50 @@
+# Create this cluster with:
+# eksctl create cluster -f Deployment/eks-cluster.yaml
+#
+# Replace region/name/node sizing as needed before running.
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: ethnography-ai-cluster
+  region: us-east-1
+
+iam:
+  withOIDC: true
+
+cloudWatch:
+  clusterLogging:
+    enableTypes:
+      - api
+      - audit
+      - authenticator
+      - controllerManager
+      - scheduler
+
+vpc:
+  nat:
+    gateway: Single
+
+addons:
+  - name: vpc-cni
+  - name: coredns
+  - name: kube-proxy
+  - name: aws-ebs-csi-driver
+    wellKnownPolicies:
+      ebsCSIController: true
+
+managedNodeGroups:
+  - name: app-workers
+    instanceTypes:
+      - t3.medium
+    minSize: 1
+    desiredCapacity: 2
+    maxSize: 4
+    volumeSize: 30
+    privateNetworking: true
+    ssh:
+      allow: false
+    labels:
+      workload: ethnography-ai
+    tags:
+      app: ethnography-ai

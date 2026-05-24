@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import {
   postAddProblem,
@@ -18,6 +18,7 @@ export default function InterviewPage({ session, onBack, onExplore }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSelectingDomains, setIsSelectingDomains] = useState(false);
   const [message, setMessage] = useState("");
+  const problemSyncStartedRef = useRef(false);
   const isComplete = Boolean(agentState?.is_complete);
   const assistantMessage = getLatestAssistantMessage(conversation);
   const framedProblem =
@@ -49,8 +50,10 @@ export default function InterviewPage({ session, onBack, onExplore }) {
     setProblem("");
 
     try {
-      if (!hasStoredProblem) {
-        await Promise.all([
+      if (!hasStoredProblem && !problemSyncStartedRef.current) {
+        problemSyncStartedRef.current = true;
+
+        Promise.all([
           postAddProblem({
             session_id: session.session_id,
             problem: problem.trim(),
@@ -61,8 +64,12 @@ export default function InterviewPage({ session, onBack, onExplore }) {
             age: Number(session.age),
             problem: problem.trim(),
           }),
-        ]);
-        setHasStoredProblem(true);
+        ])
+          .then(() => setHasStoredProblem(true))
+          .catch((error) => {
+            problemSyncStartedRef.current = false;
+            console.warn("Problem context sync failed", error);
+          });
       }
 
       const result = await postProblemFraming({

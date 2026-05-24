@@ -1,0 +1,212 @@
+# Apply this after the EKS cluster exists and your backend secret has been created:
+# kubectl apply -f Deployment/k8s-app.yaml
+#
+# Replace both image values with your ECR image URIs before applying.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ethnography-ai
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp3
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  fsType: ext4
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backend-data-pvc
+  namespace: ethnography-ai
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: gp3
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: ethnography-ai
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: 076757367566.dkr.ecr.us-east-1.amazonaws.com/ethnography/backend:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: AZURE_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ethnography-backend-secrets
+                  key: AZURE_OPENAI_API_KEY
+            - name: AZURE_OPENAI_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: ethnography-backend-secrets
+                  key: AZURE_OPENAI_ENDPOINT
+            - name: AZURE_OPENAI_DEPLOYMENT
+              valueFrom:
+                secretKeyRef:
+                  name: ethnography-backend-secrets
+                  key: AZURE_OPENAI_DEPLOYMENT
+            - name: AZURE_OPENAI_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: ethnography-backend-secrets
+                  key: AZURE_OPENAI_MODEL
+                  optional: true
+            - name: LLM_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: ethnography-backend-secrets
+                  key: LLM_MODEL
+                  optional: true
+            - name: DATABASE_PATH
+              value: /data/ethnography_ai.db
+            - name: CHROMA_DB_PATH
+              value: /data/chroma_db
+            - name: LLM_TIMEOUT_SECONDS
+              value: "60"
+            - name: LLM_MAX_RETRIES
+              value: "2"
+            - name: LLM_RETRY_BACKOFF_SECONDS
+              value: "1.5"
+            - name: LLM_MAX_WORKERS
+              value: "4"
+          volumeMounts:
+            - name: backend-data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "1"
+              memory: 2Gi
+      volumes:
+        - name: backend-data
+          persistentVolumeClaim:
+            claimName: backend-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: ethnography-ai
+  labels:
+    app: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: ethnography-ai
+  labels:
+    app: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: 076757367566.dkr.ecr.us-east-1.amazonaws.com/ethnography/frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: BACKEND_URL
+              value: http://backend-service:8000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: ethnography-ai
+  labels:
+    app: frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

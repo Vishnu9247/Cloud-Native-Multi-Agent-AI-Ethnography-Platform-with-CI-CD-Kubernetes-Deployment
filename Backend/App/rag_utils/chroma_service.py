@@ -1,6 +1,11 @@
 import chromadb
-import uuid
+import hashlib
 import json
+import math
+import os
+import re
+import uuid
+from pathlib import Path
 from typing import Any
 
 from chromadb.config import Settings
@@ -9,15 +14,39 @@ from App.general_utils.logging_config import get_logger
 
 
 logger = get_logger(__name__)
+DEFAULT_CHROMA_DB_PATH = Path(__file__).resolve().parents[1] / "chroma_db"
+CHROMA_DB_PATH = Path(os.getenv("CHROMA_DB_PATH", str(DEFAULT_CHROMA_DB_PATH)))
+EMBEDDING_DIMENSION = int(os.getenv("CHROMA_EMBEDDING_DIMENSION", "384"))
+CHROMA_DB_PATH.mkdir(parents=True, exist_ok=True)
 
 chroma_client = chromadb.PersistentClient(
-    path="./App/chroma_db",
+    path=str(CHROMA_DB_PATH),
     settings=Settings(
         anonymized_telemetry=False,
         chroma_product_telemetry_impl="App.rag_utils.chroma_telemetry.NoOpProductTelemetry",
         chroma_telemetry_impl="App.rag_utils.chroma_telemetry.NoOpProductTelemetry",
     ),
 )
+
+
+def embed_text(text: str) -> list[float]:
+    tokens = re.findall(r"[a-zA-Z0-9_]+", text.lower())
+    if not tokens:
+        tokens = [text]
+
+    vector = [0.0] * EMBEDDING_DIMENSION
+
+    for token in tokens:
+        digest = hashlib.sha256(token.encode("utf-8")).digest()
+        index = int.from_bytes(digest[:4], "big") % EMBEDDING_DIMENSION
+        sign = 1.0 if digest[4] % 2 == 0 else -1.0
+        vector[index] += sign
+
+    norm = math.sqrt(sum(value * value for value in vector))
+    if norm == 0:
+        return vector
+
+    return [value / norm for value in vector]
 
 def create_vector_store(session_id: str):
     
@@ -38,20 +67,22 @@ def serialize_metadata_value(value: Any):
 
 def add_doc(session_id: str, content: dict):
     
-    collection = chroma_client.get_collection(name = session_id)
+    collection = chroma_client.get_or_create_collection(name = session_id)
 
     domain = content['domain']
     tags = content['tags']
     doc_id = f"{session_id}_{domain}_{uuid.uuid4().hex}"
+    summary = content['summary']
 
     collection.add(
         ids=[doc_id],
-        documents=[content['summary']],
+        documents=[summary],
+        embeddings=[embed_text(summary)],
         metadatas=[
             {
                 "session_id": session_id,
                 "domain": domain,
-                "subdomain": tags[1] if isinstance(tags, list) and len(tags) > 1 else None,
+                "subdomain": tags[1] if isinstance(tags, list) and len(tags) > 1 else "",
                 "tags": serialize_metadata_value(tags),
                 "document_type": "subdomain_summary",
             }
@@ -61,13 +92,14 @@ def add_doc(session_id: str, content: dict):
 
 
 def add_problem(session_id: str, problem: str):
-    collection = chroma_client.get_collection(name = session_id)
+    collection = chroma_client.get_or_create_collection(name = session_id)
 
     doc_id = f"{session_id}_problem"
 
     collection.upsert(
         ids=[doc_id],
         documents=[problem],
+        embeddings=[embed_text(problem)],
         metadatas=[
             {
                 "session_id": session_id,
@@ -85,7 +117,7 @@ def query_docs(session_id: str, query: str, n_results: int = 5):
     collection = chroma_client.get_collection(session_id)
 
     result = collection.query(
-        query_texts=[query],
+        query_embeddings=[embed_text(query)],
         n_results=n_results,
     )
 

@@ -1,13 +1,16 @@
 import json
+import os
 import sqlite3
 from pathlib import Path
 from typing import Any
 
 
-DATABASE_PATH = Path(__file__).resolve().parents[1] / "ethnography_ai.db"
+DEFAULT_DATABASE_PATH = Path(__file__).resolve().parents[1] / "ethnography_ai.db"
+DATABASE_PATH = Path(os.getenv("DATABASE_PATH", str(DEFAULT_DATABASE_PATH)))
 
 
 def get_connection():
+    DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
     connection = sqlite3.connect(DATABASE_PATH)
     connection.row_factory = sqlite3.Row
     return connection

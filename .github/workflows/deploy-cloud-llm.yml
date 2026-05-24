@@ -1,0 +1,198 @@
+name: Build And Deploy Cloud LLM
+
+on:
+  push:
+    branches:
+      - cloud_llm
+  workflow_dispatch:
+
+concurrency:
+  group: ethnography-ai-cloud-llm
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: ethnography-ai-cluster
+  K8S_NAMESPACE: ethnography-ai
+  ECR_BACKEND_REPOSITORY: ethnography/backend
+  ECR_FRONTEND_REPOSITORY: ethnography/frontend
+  BACKEND_DEPLOYMENT: backend
+  FRONTEND_DEPLOYMENT: frontend
+  BACKEND_CONTAINER: backend
+  FRONTEND_CONTAINER: frontend
+
+jobs:
+  build-and-deploy:
+    name: Build, Push, And Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Resolve AWS Account And Image Tags
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+          IMAGE_TAG="${GITHUB_SHA::12}"
+          ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
+          echo "aws_account_id=${AWS_ACCOUNT_ID}" >> "${GITHUB_OUTPUT}"
+          echo "image_tag=${IMAGE_TAG}" >> "${GITHUB_OUTPUT}"
+          echo "ecr_registry=${ECR_REGISTRY}" >> "${GITHUB_OUTPUT}"
+          echo "backend_image=${ECR_REGISTRY}/${ECR_BACKEND_REPOSITORY}:${IMAGE_TAG}" >> "${GITHUB_OUTPUT}"
+          echo "frontend_image=${ECR_REGISTRY}/${ECR_FRONTEND_REPOSITORY}:${IMAGE_TAG}" >> "${GITHUB_OUTPUT}"
+
+      - name: Login To Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Ensure ECR Repositories Exist
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          aws ecr describe-repositories --repository-names "${ECR_BACKEND_REPOSITORY}" >/dev/null 2>&1 \
+            || aws ecr create-repository --repository-name "${ECR_BACKEND_REPOSITORY}" >/dev/null
+
+          aws ecr describe-repositories --repository-names "${ECR_FRONTEND_REPOSITORY}" >/dev/null 2>&1 \
+            || aws ecr create-repository --repository-name "${ECR_FRONTEND_REPOSITORY}" >/dev/null
+
+      - name: Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build And Push Backend Image
+        uses: docker/build-push-action@v6
+        with:
+          context: Backend/App
+          file: Backend/App/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.backend_image }}
+            ${{ steps.meta.outputs.ecr_registry }}/${{ env.ECR_BACKEND_REPOSITORY }}:latest
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      - name: Build And Push Frontend Image
+        uses: docker/build-push-action@v6
+        with:
+          context: Frontend
+          file: Frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.frontend_image }}
+            ${{ steps.meta.outputs.ecr_registry }}/${{ env.ECR_FRONTEND_REPOSITORY }}:latest
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+
+      - name: Install eksctl
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl --silent --location \
+            "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" \
+            | tar xz -C /tmp
+          sudo mv /tmp/eksctl /usr/local/bin/eksctl
+          eksctl version
+
+      - name: Set Up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: latest
+
+      - name: Create Or Reuse EKS Cluster
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if eksctl get cluster --name "${EKS_CLUSTER_NAME}" --region "${AWS_REGION}" >/dev/null 2>&1; then
+            echo "EKS cluster ${EKS_CLUSTER_NAME} already exists."
+          else
+            echo "Creating EKS cluster ${EKS_CLUSTER_NAME}."
+            eksctl create cluster -f Deployment/eks-cluster.yaml
+          fi
+
+      - name: Update kubeconfig
+        shell: bash
+        run: |
+          set -euo pipefail
+          aws eks update-kubeconfig --region "${AWS_REGION}" --name "${EKS_CLUSTER_NAME}"
+
+      - name: Apply Runtime Secrets
+        shell: bash
+        env:
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+          AZURE_OPENAI_MODEL: ${{ secrets.AZURE_OPENAI_MODEL }}
+        run: |
+          set -euo pipefail
+
+          kubectl create namespace "${K8S_NAMESPACE}" \
+            --dry-run=client \
+            -o yaml \
+            | kubectl apply -f -
+
+          kubectl create secret generic ethnography-backend-secrets \
+            --namespace "${K8S_NAMESPACE}" \
+            --from-literal=AZURE_OPENAI_API_KEY="${AZURE_OPENAI_API_KEY}" \
+            --from-literal=AZURE_OPENAI_ENDPOINT="${AZURE_OPENAI_ENDPOINT}" \
+            --from-literal=AZURE_OPENAI_DEPLOYMENT="${AZURE_OPENAI_DEPLOYMENT}" \
+            --from-literal=AZURE_OPENAI_MODEL="${AZURE_OPENAI_MODEL}" \
+            --from-literal=LLM_MODEL="${AZURE_OPENAI_MODEL}" \
+            --dry-run=client \
+            -o yaml \
+            | kubectl apply -f -
+
+      - name: Deploy Kubernetes Manifests
+        shell: bash
+        run: |
+          set -euo pipefail
+          kubectl apply -f Deployment/k8s-app.yaml
+
+      - name: Deploy Newly Built Images
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          kubectl set image "deployment/${BACKEND_DEPLOYMENT}" \
+            "${BACKEND_CONTAINER}=${{ steps.meta.outputs.backend_image }}" \
+            --namespace "${K8S_NAMESPACE}"
+
+          kubectl set image "deployment/${FRONTEND_DEPLOYMENT}" \
+            "${FRONTEND_CONTAINER}=${{ steps.meta.outputs.frontend_image }}" \
+            --namespace "${K8S_NAMESPACE}"
+
+      - name: Wait For Rollout
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          kubectl rollout status "deployment/${BACKEND_DEPLOYMENT}" \
+            --namespace "${K8S_NAMESPACE}" \
+            --timeout=10m
+
+          kubectl rollout status "deployment/${FRONTEND_DEPLOYMENT}" \
+            --namespace "${K8S_NAMESPACE}" \
+            --timeout=10m
+
+      - name: Print Application URL
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          kubectl get service frontend-service --namespace "${K8S_NAMESPACE}"

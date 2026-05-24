@@ -15,7 +15,7 @@ DEFAULT_ENDPOINT = os.getenv(
 )
 DEFAULT_DEPLOYMENT = os.getenv(
     "AZURE_OPENAI_DEPLOYMENT",
-    os.getenv("LLM_MODEL", "gpt-5.4-mini"),
+    os.getenv("AZURE_OPENAI_MODEL", os.getenv("LLM_MODEL", "gpt-5.4-mini")),
 )
 DEFAULT_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "60"))
 DEFAULT_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
