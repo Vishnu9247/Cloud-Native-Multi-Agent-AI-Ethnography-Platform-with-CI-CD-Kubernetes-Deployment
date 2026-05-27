@@ -55,7 +55,7 @@ At a high level, the system has two layers:
 
 The frontend is the participant-facing interview workspace. The backend coordinates the agents, stores session data, calls Azure OpenAI, and manages retrieval memory. Kubernetes runs the frontend and backend containers in AWS, while GitHub Actions builds and deploys each new version.
 
-## Technical Implementation
+## Technical Implementation-
 
 ### Frontend
 
