@@ -1,0 +1,33 @@
+﻿case_id,difficulty,elapsed_seconds,expected_move,format_valid,move_proxy_score,output_tokens,overall_score,prompt_tokens,question_count_valid,question_mark_rate,raw_output,split,target_cue_recall,task,variant
+ETHNO-001,easy,22.0216,,1.0,,276,0.675,448,1.0,1.0,"{
+    ""domain"": ""Behavioral"",
+    ""subdomain"": ""Technology usage"",
+    ""questions"": [
+        ""Can you walk me through a typical evening for studying, from when you start to when you go to bed? What's the first thing that usually happens?"",
+        ""What's the emotional tone like when you're scrolling until midnight? Is there anything in particular that makes you feel this way?"",
+        ""When do you typically find yourself getting sucked into scrolling? Is it always at the same time of day, or does it vary depending on how much studying you've done earlier?"",
+        ""Are there any specific times of the week or month when you tend to struggle with staying focused while studying? Do certain days feel like 'study days' and others feel more like 'relaxation days'?"",
+        ""Can you think of a time recently when you did study consistently without feeling overwhelmed? What was different about that day, and how can you incorporate those elements into your routine now?"",
+        ""How often do you find yourself scrolling until midnight, and is there anything in particular that makes you feel like you need to keep going even after you've had enough?"",
+        ""Is there a specific app or feature on your phone that tends to trigger your late-night scrolling? Is it the notifications, the endless scroll feed, or something else entirely?""
+    ]
+}",development,0.5,question_generation,deep
+ETHNO-001,easy,28.1077,KEEP,1.0,0.0,25,0.2,252,,,"What usually happens right before you start scrolling, and how does that moment relate to your goals or needs at that time?",development,,rephrase,deep
+ETHNO-001,easy,26.9737,DEEPEN,1.0,0.25,9,0.4,251,,,What happens immediately after you start scrolling?,development,,rephrase,deep
+ETHNO-001,easy,25.7263,SHARPEN,1.0,0.75,15,0.8,253,,,How does late-night phone scrolling affect your ability to focus on studying?,development,,rephrase,deep
+ETHNO-001,easy,26.521,,1.0,,227,0.5667,216,1.0,1.0,"{
+    ""domain"": ""Behavioral"",
+    ""subdomain"": ""Technology usage"",
+    ""questions"": [
+        ""Can you walk me through your typical evening routine, and how technology fits into it?"",
+        ""What's the first thing you reach for when you sit down to relax after a long day? How does that affect your study habits?"",
+        ""How do you usually find yourself scrolling on your devices before bed? Is there something specific that triggers this behavior?"",
+        ""Can you think of a recent instance where you felt like you were 'stuck' in front of your screen, unable to put it down? What was happening at the time?"",
+        ""Do you have any favorite apps or websites that you find yourself mindlessly browsing through? How do they make you feel?"",
+        ""How does the environment around you influence your technology usage? For example, are there certain rooms in your home where you're more likely to scroll than study?"",
+        ""Can you describe a time when you successfully resisted the urge to scroll before bed and instead focused on studying? What made that experience different from others?""
+    ]
+}",development,0.3333333333333333,question_generation,lite
+ETHNO-001,easy,5.2132,KEEP,1.0,0.0,15,0.2,145,,,What are some things that you notice or feel before you start scrolling?,development,,rephrase,lite
+ETHNO-001,easy,13.4231,DEEPEN,1.0,0.5,14,0.6,144,,,What triggers you to automatically open the app when a notification arrives?,development,,rephrase,lite
+ETHNO-001,easy,1.7821,SHARPEN,1.0,1.0,19,1.0,146,,,How do you think late-night scrolling on your phone impacts the quality of your revision sessions?,development,,rephrase,lite

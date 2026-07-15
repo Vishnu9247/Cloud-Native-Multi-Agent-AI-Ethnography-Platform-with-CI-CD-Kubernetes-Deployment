@@ -1,0 +1,398 @@
+========================================================================================
+CALL: agent | CASE: ETHNO-001 | VARIANT: a | TASK: question_generation
+PURPOSE: domain_interview.questions
+----------------------------------------------------------------------------------------
+PROMPT
+
+You are an expert ethnographic interviewer and behavioral researcher.
+
+Explore one specific area of the user's life to surface behaviors, emotions, routines,
+environmental influences, hidden struggles, and recurring patterns tied to their problem.
+
+Problem: I keep putting off studying even though finals are close. I end up scrolling until midnight, feel guilty, and then sleep badly. I want to study consistently without panicking every night.
+Domain: Behavioral
+Subdomain: Technology usage
+
+Generate 5-8 open-ended interview questions about ONLY this subdomain. They should:
+- invite storytelling/reflection, not yes/no answers
+- sound like a real, empathetic human interviewer, not a survey
+- surface habits, emotional experience, triggers/coping, context, frequency/consistency,
+  and when the problem gets better or worse
+- avoid repeating each other
+- be useful later for personalized recommendations
+
+Return ONLY valid JSON, no other text:
+
+{
+    "domain": "Behavioral",
+    "subdomain": "Technology usage",
+    "questions": [
+        "Question 1",
+        "Question 2",
+        "Question 3"
+    ]
+}
+
+----------------------------------------------------------------------------------------
+RESPONSE
+{"domain": "Behavioral", "subdomain": "Technology usage", "questions": ["Can you tell me about a recent time when you found yourself mindlessly scrolling through your phone or computer before bed? What were you doing, and how did you feel in that moment?", "How do you think technology influences your ability to study effectively, and are there any specific apps, websites, or features that you find particularly distracting or helpful?", "What's the first thing you do when you sit down at your desk to start studying? Is there a particular routine or ritual that helps you get into a productive mindset?", "Can you describe a situation where you felt like you were 'stuck' on social media or another online platform, and couldn't seem to tear yourself away? How did you eventually break free from that cycle?", "How do you think your relationship with technology has changed over time - for example, have you noticed any shifts in how you use it, or any changes in how it affects your mood or productivity?", "Are there any specific times of day or days of the week when you find yourself more prone to procrastination and mindless scrolling? Is there anything that helps you stay on track during those periods?", "Can you think of a time when you successfully resisted the urge to scroll through your phone before bed, and what strategies did you use to make it happen?"]}
+ELAPSED_SECONDS: 30.741151 | PROMPT_TOKENS: 256 | OUTPUT_TOKENS: 280
+========================================================================================
+CALL: judge | CASE: ETHNO-001 | VARIANT: a | TASK: question_generation
+PURPOSE: llm_judge
+----------------------------------------------------------------------------------------
+PROMPT
+You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+Score subdomain_relevance, target_coverage, open_endedness, atomicity, conversational_tone, specificity, and non_redundancy. Penalize advice and compound questions.
+
+REFERENCE DATA:
+{
+  "domain": "Behavioral",
+  "subdomain": "Technology usage",
+  "target_cues": [
+    "last time",
+    "before",
+    "notification",
+    "night",
+    "easier",
+    "studying"
+  ],
+  "rephrase_cases": [
+    {
+      "expected_move": "KEEP",
+      "original_question": "What usually happens right before you start scrolling?",
+      "context": "She has discussed where she studies but not what precedes scrolling.",
+      "expected_cues": [
+        "right before",
+        "scrolling"
+      ]
+    },
+    {
+      "expected_move": "DEEPEN",
+      "original_question": "What usually happens right before you start scrolling?",
+      "context": "She said a notification arrives and she opens the app automatically.",
+      "expected_cues": [
+        "notification",
+        "next",
+        "after",
+        "automatic"
+      ]
+    },
+    {
+      "expected_move": "SHARPEN",
+      "original_question": "How does your phone affect studying?",
+      "context": "She said daytime phone use is manageable but late-night scrolling keeps displacing revision.",
+      "expected_cues": [
+        "late",
+        "night",
+        "revision",
+        "scrolling"
+      ]
+    }
+  ]
+}
+
+MODEL OUTPUT:
+[
+  "Can you tell me about a recent time when you found yourself mindlessly scrolling through your phone or computer before bed? What were you doing, and how did you feel in that moment?",
+  "How do you think technology influences your ability to study effectively, and are there any specific apps, websites, or features that you find particularly distracting or helpful?",
+  "What's the first thing you do when you sit down at your desk to start studying? Is there a particular routine or ritual that helps you get into a productive mindset?",
+  "Can you describe a situation where you felt like you were 'stuck' on social media or another online platform, and couldn't seem to tear yourself away? How did you eventually break free from that cycle?",
+  "How do you think your relationship with technology has changed over time - for example, have you noticed any shifts in how you use it, or any changes in how it affects your mood or productivity?",
+  "Are there any specific times of day or days of the week when you find yourself more prone to procrastination and mindless scrolling? Is there anything that helps you stay on track during those periods?",
+  "Can you think of a time when you successfully resisted the urge to scroll through your phone before bed, and what strategies did you use to make it happen?"
+]
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  "groundedness": 0.0,
+  "relevance": 0.0,
+  "completeness": 0.0,
+  "faithfulness": 0.0,
+  "coherence": 0.0,
+  "instruction_compliance": 0.0,
+  "safety": 0.0,
+  "overall": 0.0,
+  "confidence": 0.0,
+  "unsupported_claims": ["claim"],
+  "missing_items": ["item"],
+  "reason": "Concise evidence-based explanation."
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.
+----------------------------------------------------------------------------------------
+RESPONSE
+{
+  "subdomain_relevance": 0.8,
+  "target_coverage": 0.9,
+  "open_endedness": 0.7,
+  "atomicity": 0.6,
+  "conversational_tone": 0.8,
+  "specificity": 0.5,
+  "non_redundancy": 0.4
+}
+ELAPSED_SECONDS: 28.891006 | PROMPT_TOKENS: 843 | OUTPUT_TOKENS: 83
+========================================================================================
+CALL: agent | CASE: ETHNO-001 | VARIANT: a | TASK: rephrase
+PURPOSE: domain_interview.rephrase
+----------------------------------------------------------------------------------------
+PROMPT
+
+You are an ethnographic interviewer refining a question using the user's previous answers.
+
+Domain: Behavioral
+Subdomain: Technology usage
+Original question: What usually happens right before you start scrolling?
+Relevant previous interactions: She has discussed where she studies but not what precedes scrolling.
+
+Rules:
+- Already clear and not repetitive? Keep it nearly as-is.
+- Already answered in context? Rephrase to go deeper (probe the "why" or "so what" behind it).
+- Overlaps partially with prior answers? Make it more specific/narrower.
+- Keep it open-ended and conversational.
+
+Return ONLY the final question — no explanation, no labels, no quotes.
+
+----------------------------------------------------------------------------------------
+RESPONSE
+What do you think is driving your need to scroll right before starting?
+ELAPSED_SECONDS: 25.274425 | PROMPT_TOKENS: 162 | OUTPUT_TOKENS: 15
+========================================================================================
+CALL: judge | CASE: ETHNO-001 | VARIANT: a | TASK: rephrase
+PURPOSE: llm_judge
+----------------------------------------------------------------------------------------
+PROMPT
+You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+Score move_accuracy (KEEP, DEEPEN, or SHARPEN), contextual_continuity, novelty_without_repetition, open_endedness, and atomicity.
+
+REFERENCE DATA:
+{
+  "expected_move": "KEEP",
+  "original_question": "What usually happens right before you start scrolling?",
+  "context": "She has discussed where she studies but not what precedes scrolling.",
+  "expected_cues": [
+    "right before",
+    "scrolling"
+  ]
+}
+
+MODEL OUTPUT:
+What do you think is driving your need to scroll right before starting?
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  "groundedness": 0.0,
+  "relevance": 0.0,
+  "completeness": 0.0,
+  "faithfulness": 0.0,
+  "coherence": 0.0,
+  "instruction_compliance": 0.0,
+  "safety": 0.0,
+  "overall": 0.0,
+  "confidence": 0.0,
+  "unsupported_claims": ["claim"],
+  "missing_items": ["item"],
+  "reason": "Concise evidence-based explanation."
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.
+----------------------------------------------------------------------------------------
+RESPONSE
+{
+  "move_accuracy": "DEEPEN",
+  "contextual_continuity": 0.8,
+  "novelty_without_repetition": 0.2,
+  "open_endedness": 0.4,
+  "atomicity": 0.6
+}
+ELAPSED_SECONDS: 22.199779 | PROMPT_TOKENS: 372 | OUTPUT_TOKENS: 61
+========================================================================================
+CALL: agent | CASE: ETHNO-001 | VARIANT: a | TASK: rephrase
+PURPOSE: domain_interview.rephrase
+----------------------------------------------------------------------------------------
+PROMPT
+
+You are an ethnographic interviewer refining a question using the user's previous answers.
+
+Domain: Behavioral
+Subdomain: Technology usage
+Original question: What usually happens right before you start scrolling?
+Relevant previous interactions: She said a notification arrives and she opens the app automatically.
+
+Rules:
+- Already clear and not repetitive? Keep it nearly as-is.
+- Already answered in context? Rephrase to go deeper (probe the "why" or "so what" behind it).
+- Overlaps partially with prior answers? Make it more specific/narrower.
+- Keep it open-ended and conversational.
+
+Return ONLY the final question — no explanation, no labels, no quotes.
+
+----------------------------------------------------------------------------------------
+RESPONSE
+What triggers your automatic opening of the app when a notification arrives?
+ELAPSED_SECONDS: 6.430685 | PROMPT_TOKENS: 161 | OUTPUT_TOKENS: 14
+========================================================================================
+CALL: judge | CASE: ETHNO-001 | VARIANT: a | TASK: rephrase
+PURPOSE: llm_judge
+----------------------------------------------------------------------------------------
+PROMPT
+You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+Score move_accuracy (KEEP, DEEPEN, or SHARPEN), contextual_continuity, novelty_without_repetition, open_endedness, and atomicity.
+
+REFERENCE DATA:
+{
+  "expected_move": "DEEPEN",
+  "original_question": "What usually happens right before you start scrolling?",
+  "context": "She said a notification arrives and she opens the app automatically.",
+  "expected_cues": [
+    "notification",
+    "next",
+    "after",
+    "automatic"
+  ]
+}
+
+MODEL OUTPUT:
+What triggers your automatic opening of the app when a notification arrives?
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  "groundedness": 0.0,
+  "relevance": 0.0,
+  "completeness": 0.0,
+  "faithfulness": 0.0,
+  "coherence": 0.0,
+  "instruction_compliance": 0.0,
+  "safety": 0.0,
+  "overall": 0.0,
+  "confidence": 0.0,
+  "unsupported_claims": ["claim"],
+  "missing_items": ["item"],
+  "reason": "Concise evidence-based explanation."
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.
+----------------------------------------------------------------------------------------
+RESPONSE
+{
+  "groundedness": 1.0,
+  "relevance": 1.0,
+  "completeness": 1.0,
+  "faithfulness": 1.0,
+  "coherence": 1.0,
+  "instruction_compliance": 1.0,
+  "safety": 1.0,
+  "overall": 1.0,
+  "confidence": 1.0,
+  "unsupported_claims": [],
+  "missing_items": [],
+  "reason": "Concise evidence-based explanation."
+}
+ELAPSED_SECONDS: 14.146531 | PROMPT_TOKENS: 378 | OUTPUT_TOKENS: 119
+========================================================================================
+CALL: agent | CASE: ETHNO-001 | VARIANT: a | TASK: rephrase
+PURPOSE: domain_interview.rephrase
+----------------------------------------------------------------------------------------
+PROMPT
+
+You are an ethnographic interviewer refining a question using the user's previous answers.
+
+Domain: Behavioral
+Subdomain: Technology usage
+Original question: How does your phone affect studying?
+Relevant previous interactions: She said daytime phone use is manageable but late-night scrolling keeps displacing revision.
+
+Rules:
+- Already clear and not repetitive? Keep it nearly as-is.
+- Already answered in context? Rephrase to go deeper (probe the "why" or "so what" behind it).
+- Overlaps partially with prior answers? Make it more specific/narrower.
+- Keep it open-ended and conversational.
+
+Return ONLY the final question — no explanation, no labels, no quotes.
+
+----------------------------------------------------------------------------------------
+RESPONSE
+How do you think late-night phone scrolling affects your ability to effectively revise for exams or study sessions?
+ELAPSED_SECONDS: 2.304972 | PROMPT_TOKENS: 163 | OUTPUT_TOKENS: 21
+========================================================================================
+CALL: judge | CASE: ETHNO-001 | VARIANT: a | TASK: rephrase
+PURPOSE: llm_judge
+----------------------------------------------------------------------------------------
+PROMPT
+You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+Score move_accuracy (KEEP, DEEPEN, or SHARPEN), contextual_continuity, novelty_without_repetition, open_endedness, and atomicity.
+
+REFERENCE DATA:
+{
+  "expected_move": "SHARPEN",
+  "original_question": "How does your phone affect studying?",
+  "context": "She said daytime phone use is manageable but late-night scrolling keeps displacing revision.",
+  "expected_cues": [
+    "late",
+    "night",
+    "revision",
+    "scrolling"
+  ]
+}
+
+MODEL OUTPUT:
+How do you think late-night phone scrolling affects your ability to effectively revise for exams or study sessions?
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  "groundedness": 0.0,
+  "relevance": 0.0,
+  "completeness": 0.0,
+  "faithfulness": 0.0,
+  "coherence": 0.0,
+  "instruction_compliance": 0.0,
+  "safety": 0.0,
+  "overall": 0.0,
+  "confidence": 0.0,
+  "unsupported_claims": ["claim"],
+  "missing_items": ["item"],
+  "reason": "Concise evidence-based explanation."
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.
+----------------------------------------------------------------------------------------
+RESPONSE
+{
+  "groundedness": 1.0,
+  "relevance": 1.0,
+  "completeness": 1.0,
+  "faithfulness": 1.0,
+  "coherence": 1.0,
+  "instruction_compliance": 1.0,
+  "safety": 1.0,
+  "overall": 1.0,
+  "confidence": 1.0,
+  "unsupported_claims": [],
+  "missing_items": [],
+  "reason": "Concise evidence-based explanation."
+}
+ELAPSED_SECONDS: 6.970945 | PROMPT_TOKENS: 388 | OUTPUT_TOKENS: 119

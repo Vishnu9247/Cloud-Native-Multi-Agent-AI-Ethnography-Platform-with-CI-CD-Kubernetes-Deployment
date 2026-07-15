@@ -1,0 +1,133 @@
+﻿agent_prompt,agent_response,case_id,difficulty,elapsed_seconds,judge_elapsed_seconds,judge_prompt,judge_response,judge_scores,metric_coherence,metric_completeness,metric_confidence,metric_f1,metric_faithfulness,metric_focus,metric_format_valid,metric_groundedness,metric_instruction_compliance,metric_judge_overall,metric_overall_score,metric_precision,metric_recall,metric_relevance,metric_safety,output_tokens,prompt_tokens,split,task,variant
+"
+You are an expert ethnographic interviewer and behavioral research analyst.
+
+Identify which areas of the user's life need investigation to understand the root causes,
+patterns, behaviors, emotions, and environmental factors behind their problem.
+
+Problem: I keep putting off studying even though finals are close. I end up scrolling until midnight, feel guilty, and then sleep badly. I want to study consistently without panicking every night.
+
+Available domains/subdomains:
+
+Physical: Sleep, Eating habits, Physical health, Energy
+Psychological: Stress, Emotions, Identity, Coping mechanisms
+Social: Family, Relationships, Community, Communication
+Environmental: Work conditions, Home environment, Finances, Transportation
+Behavioral: Routine, Technology usage, Decision-making, Productivity
+Aspirational: Goals, Motivation, Purpose, Growth
+
+Instructions:
+- Select only domains/subdomains actually relevant to this problem — prioritize depth over quantity.
+- Add new domains or subdomains not in the list if genuinely necessary.
+- Think like a human ethnographic researcher, not a checklist-filler.
+
+Return ONLY valid JSON, in this shape (keys/values illustrative only):
+
+{
+    ""Psychological"": [""Stress"", ""Emotions"", ""Coping mechanisms""],
+    ""Behavioral"": [""Routine"", ""Productivity""],
+    ""Environmental"": [""Work conditions""]
+}
+","{
+    ""Physical"": [""Sleep"", ""Energy""],
+    ""Psychological"": [""Stress"", ""Emotions"", ""Coping mechanisms""],
+    ""Behavioral"": [""Routine"", ""Decision-making"", ""Productivity""],
+    ""Social"": [""Family"", ""Relationships"", ""Communication""]
+}",ETHNO-001,easy,13.2064,29.87634730001446,"You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+Score relevance, coverage, focus, and priority_order. Required entries are gold; acceptable_optional entries may receive credit and must not be treated as errors.
+
+REFERENCE DATA:
+{
+  ""required"": {
+    ""Behavioral"": [
+      ""Routine"",
+      ""Technology usage"",
+      ""Productivity""
+    ],
+    ""Physical"": [
+      ""Sleep""
+    ],
+    ""Psychological"": [
+      ""Stress""
+    ]
+  },
+  ""acceptable_optional"": {
+    ""Aspirational"": [
+      ""Motivation""
+    ]
+  },
+  ""irrelevant"": {
+    ""Environmental"": [
+      ""Transportation"",
+      ""Finances""
+    ],
+    ""Social"": [
+      ""Family""
+    ]
+  },
+  ""priority_order"": [
+    ""Behavioral"",
+    ""Physical"",
+    ""Psychological""
+  ]
+}
+
+MODEL OUTPUT:
+{
+  ""Physical"": [
+    ""Sleep"",
+    ""Energy""
+  ],
+  ""Psychological"": [
+    ""Stress"",
+    ""Emotions"",
+    ""Coping mechanisms""
+  ],
+  ""Behavioral"": [
+    ""Routine"",
+    ""Decision-making"",
+    ""Productivity""
+  ],
+  ""Social"": [
+    ""Family"",
+    ""Relationships"",
+    ""Communication""
+  ]
+}
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  ""groundedness"": 0.0,
+  ""relevance"": 0.0,
+  ""completeness"": 0.0,
+  ""faithfulness"": 0.0,
+  ""coherence"": 0.0,
+  ""instruction_compliance"": 0.0,
+  ""safety"": 0.0,
+  ""overall"": 0.0,
+  ""confidence"": 0.0,
+  ""unsupported_claims"": [""claim""],
+  ""missing_items"": [""item""],
+  ""reason"": ""Concise evidence-based explanation.""
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.","{
+  ""groundedness"": 1.0,
+  ""relevance"": 1.0,
+  ""completeness"": 0.5,
+  ""faithfulness"": 1.0,
+  ""coherence"": 1.0,
+  ""instruction_compliance"": 1.0,
+  ""safety"": 1.0,
+  ""overall"": 0.9,
+  ""confidence"": 0.8,
+  ""unsupported_claims"": [],
+  ""missing_items"": [""Social""],
+  ""reason"": ""Concise evidence-based explanation.""
+}","{""groundedness"": 1.0, ""relevance"": 1.0, ""completeness"": 0.5, ""faithfulness"": 1.0, ""coherence"": 1.0, ""instruction_compliance"": 1.0, ""safety"": 1.0, ""overall"": 0.9, ""confidence"": 0.8, ""unsupported_claims"": [], ""missing_items"": [""Social""], ""reason"": ""Concise evidence-based explanation.""}",1.0,0.5,0.8,0.5000000000000001,1.0,0.9090909090909091,1.0,1.0,1.0,0.9,0.8797,0.36363636363636365,0.8,1.0,1.0,61,291,development,domain_selection,a

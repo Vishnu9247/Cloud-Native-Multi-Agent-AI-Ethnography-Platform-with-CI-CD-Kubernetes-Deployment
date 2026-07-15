@@ -1,0 +1,40 @@
+﻿case_id,classification_accuracy,difficulty,elapsed_seconds,format_valid,judge_elapsed_seconds,judge_scores,key_phrase_recall,output_tokens,overall_score,prompt_tokens,raw_output,split,task,variant
+ETHNO-001,1.0,easy,19.7581,1.0,,,,2,1.0,627,Complete,development,completeness,deep
+ETHNO-001,,easy,29.7404,1.0,30.32620519999182,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.8,166,0.36,431,"Problem Summary:
+
+Maya struggles to establish a consistent study routine due to procrastination and feelings of overwhelm. She often finds herself stuck in a cycle of scrolling until midnight, feeling guilty, and then experiencing poor sleep quality. This pattern is emotionally draining and numbing, making it difficult for her to approach studying with motivation.
+
+Key Objectives:
+
+1. Develop a consistent daily study schedule.
+2. Reduce procrastination and feelings of overwhelm.
+3. Improve sleep quality to enhance overall well-being.
+
+Primary Pain Points:
+
+1. Procrastination and lack of motivation.
+2. Emotional exhaustion from scrolling and guilt.
+3. Difficulty in establishing a productive study routine.
+
+Important Context:
+
+Maya is 21 years old, approaching the end of her academic journey. She has expressed feelings of anxiety and pressure to perform well on upcoming finals.",development,summary,deep
+ETHNO-001,0.0,easy,14.223,0.0,,,,17,0.0,245,"Incomplete
+
+What's driving your desire to study consistently without panicking every night?",development,completeness,lite
+ETHNO-001,,easy,21.3688,1.0,23.48201330000302,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.8,132,0.36,254,"Problem Summary:
+Maya struggles with procrastination and inconsistent studying habits, leading to poor sleep quality and increased stress levels. This affects her academic performance and overall well-being.
+
+Key Objectives:
+- Develop a consistent study routine
+- Reduce stress and anxiety related to studying
+- Improve academic performance
+
+Primary Pain Points:
+- Feeling guilty and anxious after scrolling through social media or watching videos instead of studying
+- Difficulty in establishing a regular study schedule
+- Poor sleep quality due to excessive screen time before bed
+
+Important Context:
+- Finals are approaching, adding pressure to Maya's academic situation
+- She has expressed frustration with her current study habits and desire for change",development,summary,lite

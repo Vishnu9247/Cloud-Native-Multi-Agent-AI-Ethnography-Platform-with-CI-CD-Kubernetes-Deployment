@@ -1,0 +1,44 @@
+﻿case_id,difficulty,elapsed_seconds,empty_decision_accuracy,format_valid,output_tokens,overall_score,pattern_cue_recall,prompt_tokens,question_mark_rate,raw_output,recommendation_cue_recall,split,target_cue_recall,task,variant
+ETHNO-001,easy,41.6771,,0.0,201,0.0,,608,0.0,"[
+    ""Can you walk me through the last time you studied before midnight and how it went?"",
+    ""Picture a typical evening when you're getting ready to study, what's the first thing you do after turning off screens?"",
+    ""What happens right after you start scrolling until midnight?"",
+    ""Is there a specific device or app that makes it easier for you to get sucked into scrolling?"",
+    ""Can you describe the environment where you usually scroll until midnight?"",
+    ""When is it easier for you to study consistently, and what's different about those days?"",
+    ""What do you typically do immediately after waking up on a morning when you feel motivated to study?"",
+    ""Is there something that always happens right before you start scrolling until midnight?"",
+    ""Can you think of a day recently where you didn't scroll until midnight, what was going through your mind during the day?"",
+    ""How does your sleep usually change from one night to another, especially when you're feeling stressed about studying?""",,development,0.0,pattern_questions,deep
+ETHNO-001,easy,21.8217,1.0,1.0,96,0.675,0.5,657,,"[
+  ""A notification during evening reading leads to nearly two hours of scrolling and guilt, which in turn delays sleep and leaves her tired the next morning."",
+  ""Checking one message turns into prolonged scrolling on three recent home-study nights, suggesting a pattern where a minor trigger escalates into a larger behavior"",
+  ""The user reliably stalls when alone at home, but follows through when an external commitment exists, indicating motivation is anchored to outside structure rather than internal routine""
+]",,development,,identify_patterns,deep
+ETHNO-001,easy,21.304,,1.0,105,0.15,,693,,"[
+  ""Anchor one small work block to an existing fixed point in the day, such as right after morning coffee, because the user's plans currently collapse at unstructured transition moments."",
+  ""Set a 'no scrolling' window of 30 minutes before bed and reward yourself with a relaxing activity if you stay within it, since late scrolling consistently delays sleep and leaves her tired the next morning."",
+  ""Schedule entertainment as a defined evening reward so it stops functioning as the automatic response to stress earlier in the day.""
+]",0.0,development,,recommendations,deep
+ETHNO-001,easy,27.5705,,0.0,226,0.0,,300,0.0,"[
+    ""Can you describe the moment when you realize you've been scrolling for hours and it's getting late?"",
+    ""How do you feel when you're about to start studying but your mind starts wandering?"",
+    ""What happens right after you finally sit down to study, before you get into a flow state?"",
+    ""Are there specific situations or emotions that make you feel like giving up on studying?"",
+    ""Can you think of a recent time when you felt guilty for not studying as much as you wanted to?"",
+    ""How do you usually spend your last hour or two before bed if you're supposed to be studying?"",
+    ""Is there something in particular that makes it hard for you to wind down after a long day and get ready for bed?"",
+    ""Can you recall a time when you felt anxious about an upcoming exam, and how did you cope with those feelings?"",
+    ""Do you have any habits or routines that help you transition from relaxation mode to study mode?"",
+    ""Are there moments when you feel like you're making progress on your studying, and what's going through your mind during those times?""",,development,0.0,pattern_questions,lite
+ETHNO-001,easy,20.1552,1.0,1.0,31,0.5938,0.375,388,,"[
+  ""Notifications during evening reading lead to prolonged scrolling and guilt."",
+  ""Checking messages turns into prolonged scrolling on recent home-study nights.""
+]",,development,,identify_patterns,lite
+ETHNO-001,easy,10.0798,,1.0,160,0.32,,418,,"[
+  ""Designate your study space as off-limits during evening hours and reward yourself after completing a set amount of time without checking messages or notifications."",
+  ""Set a timer for 25 minutes, work on a single task without breaks, and take a short break before repeating the cycle to maintain focus."",
+  ""Limit social media use to specific times of the day (e.g., during lunch or right after work) and remove it from your study environment."",
+  ""Create a 'stop scrolling' ritual: when you catch yourself scrolling, pause for 5 minutes, then return to your task. This helps build self-awareness and breaks the habit."",
+  ""Schedule dedicated time blocks for studying and checking messages, ensuring that neither activity encroaches on the other's time slot.""
+]",0.2,development,,recommendations,lite

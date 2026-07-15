@@ -1,0 +1,20 @@
+{
+  "agent": "domain_selection",
+  "rows": 2,
+  "variants": {
+    "deep": {
+      "row_count": 1,
+      "overall_score": 0.3075,
+      "format_valid_rate": 0.0,
+      "mean_elapsed_seconds": 19.6738,
+      "mean_output_tokens": 223.0
+    },
+    "lite": {
+      "row_count": 1,
+      "overall_score": 0.8438,
+      "format_valid_rate": 1.0,
+      "mean_elapsed_seconds": 30.5401,
+      "mean_output_tokens": 181.0
+    }
+  }
+}

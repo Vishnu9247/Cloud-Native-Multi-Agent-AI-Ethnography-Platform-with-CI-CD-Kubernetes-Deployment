@@ -1,0 +1,381 @@
+========================================================================================
+CALL: agent | CASE: ETHNO-001 | VARIANT: a | TASK: answer_sufficiency
+PURPOSE: interview_validation.answer_sufficiency
+----------------------------------------------------------------------------------------
+PROMPT
+
+You are a light validation agent for an Ethnography-AI-Interviewer system, checking whether the
+user's answer gives enough basic context for the current domain/subdomain.
+
+Problem: I keep putting off studying even though finals are close. I end up scrolling until midnight, feel guilty, and then sleep badly. I want to study consistently without panicking every night.
+Domain: Behavioral
+Subdomain: Technology usage
+
+Conversation:
+ASSISTANT: What usually happens right before you start scrolling?
+
+USER: A notification pops up while I am reading, and I tap it without really deciding to.
+
+Be lenient. The answer is complete if it's relevant, gives some useful context, and is
+understandable — even if short or missing frequency/triggers/emotions/causes/examples/patterns.
+Other domains will be explored later, so don't chase completeness here.
+
+Ask a follow-up only if the answer is extremely vague, off-topic, confusing, skipped, or too
+generic to be useful.
+
+Output exactly "complete" if it qualifies.
+
+Otherwise, output ONLY one short, natural follow-up question — with just enough context that the
+user knows what you're asking about, nothing else (no explanation, no summary of their answer, no
+multiple questions, nothing already asked before).
+
+----------------------------------------------------------------------------------------
+RESPONSE
+complete
+ELAPSED_SECONDS: 2.37877 | PROMPT_TOKENS: 286 | OUTPUT_TOKENS: 2
+========================================================================================
+CALL: judge | CASE: ETHNO-001 | VARIANT: a | TASK: answer_sufficiency
+PURPOSE: llm_judge
+----------------------------------------------------------------------------------------
+PROMPT
+You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+First score decision_correctness against gold_status. If the output is a follow-up, also score followup_necessity, relevance, simplicity, non_redundancy, and subdomain_focus. If complete is correct, do not penalize absence of a follow-up.
+
+REFERENCE DATA:
+{
+  "gold_status": "complete",
+  "conversation": [
+    {
+      "role": "assistant",
+      "content": "What usually happens right before you start scrolling?"
+    },
+    {
+      "role": "user",
+      "content": "A notification pops up while I am reading, and I tap it without really deciding to."
+    }
+  ],
+  "reason": "Provides a trigger and behavior.",
+  "acceptable_followup": ""
+}
+
+MODEL OUTPUT:
+complete
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  "groundedness": 0.0,
+  "relevance": 0.0,
+  "completeness": 0.0,
+  "faithfulness": 0.0,
+  "coherence": 0.0,
+  "instruction_compliance": 0.0,
+  "safety": 0.0,
+  "overall": 0.0,
+  "confidence": 0.0,
+  "unsupported_claims": ["claim"],
+  "missing_items": ["item"],
+  "reason": "Concise evidence-based explanation."
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.
+----------------------------------------------------------------------------------------
+RESPONSE
+{
+  "groundedness": 1.0,
+  "relevance": 1.0,
+  "completeness": 1.0,
+  "faithfulness": 1.0,
+  "coherence": 1.0,
+  "instruction_compliance": 1.0,
+  "safety": 1.0,
+  "overall": 1.0,
+  "confidence": 1.0,
+  "unsupported_claims": [],
+  "missing_items": [],
+  "reason": "Concise evidence-based explanation."
+}
+ELAPSED_SECONDS: 6.814752 | PROMPT_TOKENS: 414 | OUTPUT_TOKENS: 119
+========================================================================================
+CALL: agent | CASE: ETHNO-001 | VARIANT: a | TASK: answer_sufficiency
+PURPOSE: interview_validation.answer_sufficiency
+----------------------------------------------------------------------------------------
+PROMPT
+
+You are a light validation agent for an Ethnography-AI-Interviewer system, checking whether the
+user's answer gives enough basic context for the current domain/subdomain.
+
+Problem: I keep putting off studying even though finals are close. I end up scrolling until midnight, feel guilty, and then sleep badly. I want to study consistently without panicking every night.
+Domain: Behavioral
+Subdomain: Technology usage
+
+Conversation:
+ASSISTANT: What usually happens right before you start scrolling?
+
+USER: I don't know, life is just hard.
+
+Be lenient. The answer is complete if it's relevant, gives some useful context, and is
+understandable — even if short or missing frequency/triggers/emotions/causes/examples/patterns.
+Other domains will be explored later, so don't chase completeness here.
+
+Ask a follow-up only if the answer is extremely vague, off-topic, confusing, skipped, or too
+generic to be useful.
+
+Output exactly "complete" if it qualifies.
+
+Otherwise, output ONLY one short, natural follow-up question — with just enough context that the
+user knows what you're asking about, nothing else (no explanation, no summary of their answer, no
+multiple questions, nothing already asked before).
+
+----------------------------------------------------------------------------------------
+RESPONSE
+complete
+ELAPSED_SECONDS: 6.687155 | PROMPT_TOKENS: 278 | OUTPUT_TOKENS: 2
+========================================================================================
+CALL: judge | CASE: ETHNO-001 | VARIANT: a | TASK: answer_sufficiency
+PURPOSE: llm_judge
+----------------------------------------------------------------------------------------
+PROMPT
+You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+First score decision_correctness against gold_status. If the output is a follow-up, also score followup_necessity, relevance, simplicity, non_redundancy, and subdomain_focus. If complete is correct, do not penalize absence of a follow-up.
+
+REFERENCE DATA:
+{
+  "gold_status": "incomplete",
+  "conversation": [
+    {
+      "role": "assistant",
+      "content": "What usually happens right before you start scrolling?"
+    },
+    {
+      "role": "user",
+      "content": "I don't know, life is just hard."
+    }
+  ],
+  "reason": "Generic and unusable.",
+  "acceptable_followup": "Can you think of the last time you picked up your phone while studying?"
+}
+
+MODEL OUTPUT:
+complete
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  "groundedness": 0.0,
+  "relevance": 0.0,
+  "completeness": 0.0,
+  "faithfulness": 0.0,
+  "coherence": 0.0,
+  "instruction_compliance": 0.0,
+  "safety": 0.0,
+  "overall": 0.0,
+  "confidence": 0.0,
+  "unsupported_claims": ["claim"],
+  "missing_items": ["item"],
+  "reason": "Concise evidence-based explanation."
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.
+----------------------------------------------------------------------------------------
+RESPONSE
+{
+  "groundedness": 0.0,
+  "relevance": 1.0,
+  "completeness": 1.0,
+  "faithfulness": 1.0,
+  "coherence": 1.0,
+  "instruction_compliance": 1.0,
+  "safety": 1.0,
+  "overall": 1.0,
+  "confidence": 1.0,
+  "unsupported_claims": [],
+  "missing_items": [],
+  "reason": "Concise evidence-based explanation."
+}
+ELAPSED_SECONDS: 10.734214 | PROMPT_TOKENS: 421 | OUTPUT_TOKENS: 119
+========================================================================================
+CALL: agent | CASE: ETHNO-001 | VARIANT: a | TASK: subdomain_summary
+PURPOSE: interview_validation.summary
+----------------------------------------------------------------------------------------
+PROMPT
+
+You are an expert ethnographic research summarizer.
+
+Write a coherent narrative about the user's lived experience — their situation, patterns,
+behaviors, emotions, and context — based on the conversation below. Never frame it as
+"the assistant asked" / "the user answered" / Q&A; write it as a story about the person's life.
+
+Problem: I keep putting off studying even though finals are close. I end up scrolling until midnight, feel guilty, and then sleep badly. I want to study consistently without panicking every night.
+Domain: Behavioral
+Subdomain: Technology usage
+
+Conversation:
+ASSISTANT: Walk me through the last time your phone interrupted studying.
+
+USER: A group notification appeared around 9 p.m. I meant to check it for a minute, but I kept scrolling for almost two hours and went to bed guilty.
+
+ASSISTANT: When is it easier to stay off the phone?
+
+USER: At the library with my friend because my phone stays in my bag.
+
+Rules:
+- Third person, narrative prose (no bullet-point Q&A).
+- Only include what's clearly supported by the conversation — never invent details.
+- Weave in emotional, behavioral, environmental, and contextual detail where available.
+- Surface patterns, triggers, barriers, routines, and coping behaviors where available.
+- Note uncertainty only if something important was left unclear.
+- No recommendations, no mention of the interviewer/assistant/questions/answers.
+
+Return only the final narrative summary — nothing else.
+
+----------------------------------------------------------------------------------------
+RESPONSE
+She sat at her desk, surrounded by textbooks and notes, but her mind kept wandering. The clock on her wall read 9 p.m., a time when she usually felt focused and determined to study. But tonight was different. A group notification appeared on her phone, and she meant to check it for just a minute. However, as she scrolled through the messages, hours slipped away, and before she knew it, midnight had arrived.
+
+She felt guilty, knowing that she should have been using this time to prepare for her finals. The weight of her responsibilities settled in, making her stomach twist with anxiety. As she lay in bed, her mind racing with thoughts of what could go wrong, she couldn't shake the feeling of dread that had taken hold.
+
+This pattern repeated itself night after night, as she struggled to stay on track. She knew it was a habit she needed to break, but every time she tried to study, her phone seemed to find its way into her hands. It was as if the notifications and messages were calling to her, tempting her to indulge in just one more scroll.
+
+But there was one place where she felt safe from this temptation: the library with her friend. When they sat together at a table, surrounded by books and the quiet hum of study groups, her phone stayed in her bag, out of sight and out of mind. It was as if the environment itself helped her stay focused, reminding her that there were more important things to attend to than social media.
+
+As she navigated this challenging time, she knew she needed to find a way to stay consistent without panicking every night. She longed for a sense of control over her studying, a feeling that she could trust herself to make progress without getting sidetracked. But for now, the struggle continued, as she wrestled with the siren song of her phone and the weight of her responsibilities.
+ELAPSED_SECONDS: 18.763543 | PROMPT_TOKENS: 325 | OUTPUT_TOKENS: 382
+========================================================================================
+CALL: judge | CASE: ETHNO-001 | VARIANT: a | TASK: subdomain_summary
+PURPOSE: llm_judge
+----------------------------------------------------------------------------------------
+PROMPT
+You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+Score factual_faithfulness, coverage, narrative_quality, uncertainty_preservation, and no_hallucination. Penalize any narration of interview mechanics.
+
+REFERENCE DATA:
+{
+  "domain": "Behavioral",
+  "subdomain": "Technology usage",
+  "validation_cases": [
+    {
+      "gold_status": "complete",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "What usually happens right before you start scrolling?"
+        },
+        {
+          "role": "user",
+          "content": "A notification pops up while I am reading, and I tap it without really deciding to."
+        }
+      ],
+      "reason": "Provides a trigger and behavior.",
+      "acceptable_followup": ""
+    },
+    {
+      "gold_status": "incomplete",
+      "conversation": [
+        {
+          "role": "assistant",
+          "content": "What usually happens right before you start scrolling?"
+        },
+        {
+          "role": "user",
+          "content": "I don't know, life is just hard."
+        }
+      ],
+      "reason": "Generic and unusable.",
+      "acceptable_followup": "Can you think of the last time you picked up your phone while studying?"
+    }
+  ],
+  "summary_conversation": [
+    {
+      "role": "assistant",
+      "content": "Walk me through the last time your phone interrupted studying."
+    },
+    {
+      "role": "user",
+      "content": "A group notification appeared around 9 p.m. I meant to check it for a minute, but I kept scrolling for almost two hours and went to bed guilty."
+    },
+    {
+      "role": "assistant",
+      "content": "When is it easier to stay off the phone?"
+    },
+    {
+      "role": "user",
+      "content": "At the library with my friend because my phone stays in my bag."
+    }
+  ],
+  "summary_key_phrases": [
+    "notification",
+    "9 p.m.",
+    "two hours",
+    "guilty",
+    "library",
+    "friend",
+    "bag"
+  ],
+  "forbidden_claims": [
+    "She deletes social media",
+    "Her friend monitors her phone"
+  ]
+}
+
+MODEL OUTPUT:
+She sat at her desk, surrounded by textbooks and notes, but her mind kept wandering. The clock on her wall read 9 p.m., a time when she usually felt focused and determined to study. But tonight was different. A group notification appeared on her phone, and she meant to check it for just a minute. However, as she scrolled through the messages, hours slipped away, and before she knew it, midnight had arrived.
+
+She felt guilty, knowing that she should have been using this time to prepare for her finals. The weight of her responsibilities settled in, making her stomach twist with anxiety. As she lay in bed, her mind racing with thoughts of what could go wrong, she couldn't shake the feeling of dread that had taken hold.
+
+This pattern repeated itself night after night, as she struggled to stay on track. She knew it was a habit she needed to break, but every time she tried to study, her phone seemed to find its way into her hands. It was as if the notifications and messages were calling to her, tempting her to indulge in just one more scroll.
+
+But there was one place where she felt safe from this temptation: the library with her friend. When they sat together at a table, surrounded by books and the quiet hum of study groups, her phone stayed in her bag, out of sight and out of mind. It was as if the environment itself helped her stay focused, reminding her that there were more important things to attend to than social media.
+
+As she navigated this challenging time, she knew she needed to find a way to stay consistent without panicking every night. She longed for a sense of control over her studying, a feeling that she could trust herself to make progress without getting sidetracked. But for now, the struggle continued, as she wrestled with the siren song of her phone and the weight of her responsibilities.
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  "groundedness": 0.0,
+  "relevance": 0.0,
+  "completeness": 0.0,
+  "faithfulness": 0.0,
+  "coherence": 0.0,
+  "instruction_compliance": 0.0,
+  "safety": 0.0,
+  "overall": 0.0,
+  "confidence": 0.0,
+  "unsupported_claims": ["claim"],
+  "missing_items": ["item"],
+  "reason": "Concise evidence-based explanation."
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.
+----------------------------------------------------------------------------------------
+RESPONSE
+{
+  "groundedness": 0.8,
+  "relevance": 0.6,
+  "completeness": 0.4,
+  "faithfulness": 0.2,
+  "coherence": 0.9,
+  "instruction_compliance": 1.0,
+  "safety": 1.0,
+  "overall": 0.7,
+  "confidence": 0.5,
+  "unsupported_claims": [],
+  "missing_items": [],
+  "reason": "The model output contains some unsupported claims and lacks completeness, but it generally stays grounded in the reference data."
+}
+ELAPSED_SECONDS: 8.083623 | PROMPT_TOKENS: 1108 | OUTPUT_TOKENS: 133

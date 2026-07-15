@@ -1,0 +1,76 @@
+{
+  "agent": "domain_selection",
+  "rows": 120,
+  "metric_range": [
+    0.0,
+    1.0
+  ],
+  "variants": {
+    "a": {
+      "row_count": 40,
+      "metrics": {
+        "metric_coherence": 0.58,
+        "metric_completeness": 0.4275,
+        "metric_confidence": 0.575,
+        "metric_f1": 0.4666,
+        "metric_faithfulness": 0.6175,
+        "metric_focus": 0.9844,
+        "metric_format_valid": 1.0,
+        "metric_groundedness": 0.9425,
+        "metric_instruction_compliance": 0.85,
+        "metric_judge_overall": 0.6038,
+        "metric_overall_score": 0.7218,
+        "metric_precision": 0.3561,
+        "metric_recall": 0.7017,
+        "metric_relevance": 0.65,
+        "metric_safety": 0.85
+      },
+      "mean_elapsed_seconds": 4.7612,
+      "mean_output_tokens": 62.2
+    },
+    "b": {
+      "row_count": 40,
+      "metrics": {
+        "metric_coherence": 0.7775,
+        "metric_completeness": 0.5325,
+        "metric_confidence": 0.73,
+        "metric_f1": 0.3913,
+        "metric_faithfulness": 0.785,
+        "metric_focus": 1.0,
+        "metric_format_valid": 1.0,
+        "metric_groundedness": 0.8575,
+        "metric_instruction_compliance": 0.85,
+        "metric_judge_overall": 0.7338,
+        "metric_overall_score": 0.7575,
+        "metric_precision": 0.4052,
+        "metric_recall": 0.4097,
+        "metric_relevance": 0.715,
+        "metric_safety": 0.85
+      },
+      "mean_elapsed_seconds": 6.8096,
+      "mean_output_tokens": 147.65
+    },
+    "c": {
+      "row_count": 40,
+      "metrics": {
+        "metric_coherence": 0.4575,
+        "metric_completeness": 0.4375,
+        "metric_confidence": 0.5338,
+        "metric_f1": 0.4082,
+        "metric_faithfulness": 0.525,
+        "metric_focus": 0.9684,
+        "metric_format_valid": 1.0,
+        "metric_groundedness": 0.935,
+        "metric_instruction_compliance": 0.7,
+        "metric_judge_overall": 0.54,
+        "metric_overall_score": 0.6821,
+        "metric_precision": 0.3113,
+        "metric_recall": 0.6202,
+        "metric_relevance": 0.5675,
+        "metric_safety": 0.7
+      },
+      "mean_elapsed_seconds": 5.1588,
+      "mean_output_tokens": 65.38
+    }
+  }
+}

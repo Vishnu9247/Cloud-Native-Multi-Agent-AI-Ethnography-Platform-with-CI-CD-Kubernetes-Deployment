@@ -1,0 +1,20 @@
+{
+  "agent": "domain_interview",
+  "rows": 8,
+  "variants": {
+    "deep": {
+      "row_count": 4,
+      "overall_score": 0.5188,
+      "format_valid_rate": 1.0,
+      "mean_elapsed_seconds": 25.7073,
+      "mean_output_tokens": 81.25
+    },
+    "lite": {
+      "row_count": 4,
+      "overall_score": 0.5917,
+      "format_valid_rate": 1.0,
+      "mean_elapsed_seconds": 11.7348,
+      "mean_output_tokens": 68.75
+    }
+  }
+}

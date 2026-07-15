@@ -1,0 +1,284 @@
+﻿case_id,classification_accuracy,difficulty,elapsed_seconds,format_valid,judge_elapsed_seconds,judge_scores,key_phrase_recall,output_tokens,overall_score,prompt_tokens,raw_output,split,task,variant
+ETHNO-001,1.0,easy,1.3311,1.0,,,,2,1.0,627,Complete,development,completeness,deep
+ETHNO-001,,easy,7.5769,1.0,5.840528100030497,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.8,138,0.36,431,"Problem Summary:
+
+Maya struggles to establish a consistent study routine due to procrastination and feelings of overwhelm. She often finds herself scrolling through screens until late at night, leading to guilt, poor sleep quality, and subsequent anxiety.
+
+Key Objectives:
+- Develop a reliable daily study schedule
+- Manage stress and anxiety related to studying
+- Improve overall academic performance
+
+Primary Pain Points:
+- Procrastination and difficulty starting studies
+- Feeling overwhelmed by the amount of material to cover
+- Negative emotional responses to studying (guilt, anxiety)
+
+Important Context:
+- Finals are approaching, increasing pressure on Maya's academic performance
+- Maya has a history of struggling with procrastination and time management",development,summary,deep
+ETHNO-002,0.0,medium,4.2552,1.0,5.268746000016108,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",,2,0.15,597,Complete,development,completeness,deep
+ETHNO-002,,medium,8.0925,1.0,6.146735000016633,"{""faithfulness"": 0.9, ""coverage"": 0.8, ""emotional_fidelity"": 0.7, ""concision"": 0.6, ""no_hallucination"": 1.0, ""overall"": 0.83, ""reason"": ""The output accurately reflects the reference data, with minor deviations in emotional fidelity and concision.""}",0.4,149,0.778,448,"Problem Summary:
+Jon is struggling to separate work from family life due to burnout, leading to emotional exhaustion and a desire to be present with his children. He feels stuck in this situation, unable to find a balance that allows him to recharge.
+
+Key Objectives:
+- Regain control over work-life boundaries
+- Recharge personal energy levels
+
+Primary Pain Points:
+- Feeling drained and depleted after work hours
+- Difficulty disconnecting from work-related tasks during family time
+- Struggling to maintain emotional presence with children due to burnout
+
+Important Context:
+- Jon's burnout is affecting his relationships with his children, making it challenging for him to be fully present and engaged.
+- He has not considered quitting his job as an option.",development,summary,deep
+ETHNO-003,1.0,hard,4.3039,1.0,,,,2,1.0,622,Complete,development,completeness,deep
+ETHNO-003,,hard,8.8919,1.0,5.708213399979286,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.5,172,0.3,426,"Problem Summary:
+
+Elena is struggling with financial management, feeling overwhelmed and stuck due to the constant appearance of fees. She describes her situation as ""drowning"" in money-related tasks, indicating a sense of emotional numbness. The user implies that her current routine and environment are not conducive to managing her finances effectively.
+
+Key Objectives:
+- Regain control over financial management
+- Reduce stress related to unexpected fees
+
+Primary Pain Points:
+- Feeling overwhelmed by the constant appearance of fees
+- Difficulty in identifying the source of these fees
+- Struggling to find a manageable approach to financial organization
+
+Important Context:
+- Elena's age (29) and life stage may influence her financial priorities and management strategies.
+- The user's emotional state, characterized as feeling ""stuck"" and ""numb,"" suggests that their financial situation is affecting their well-being.",development,summary,deep
+ETHNO-004,1.0,medium,4.3395,1.0,,,,2,1.0,628,Complete,validation,completeness,deep
+ETHNO-004,,medium,8.2531,1.0,5.6190476000192575,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.6666666666666666,148,0.3333,432,"Problem Summary:
+
+Darius feels disconnected and isolated since retiring, with days feeling empty and lacking meaningful social interaction. He yearns for regular contact but is dissatisfied with suggestions that rely on technology or nighttime drives.
+
+Key Objectives:
+- Reestablish a sense of purpose and fulfillment
+- Develop strategies for maintaining social connections in retirement
+
+Primary Pain Points:
+- Feeling stuck and disconnected from others
+- Struggling to find meaningful ways to fill the void left by retirement
+- Discomfort with relying on technology or driving at night for social interaction
+
+Important Context:
+- Retirement has led to a significant change in Darius's daily routine and sense of identity
+- He is seeking more than superficial connections, wanting to engage in deeper conversations and relationships",validation,summary,deep
+ETHNO-005,0.0,hard,4.2265,1.0,5.117761300003622,"{""followup_relevance"": 0.8, ""warmth"": 0.9, ""atomicity"": 1.0, ""non_redundancy"": 1.0, ""overall"": 0.87, ""reason"": ""The follow-up question targets the documented missing dimension 'struggle' and is relevant to the context, while also conveying empathy and understanding.""}",,2,0.3675,598,Complete,validation,completeness,deep
+ETHNO-005,,hard,9.9443,1.0,6.6950972999911755,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.8333333333333334,199,0.3667,455,"Problem Summary:
+Priya experiences chronic stress and overwhelm due to her rotating hospital shifts and caregiving responsibilities for her mother. She feels ""drowning"" in a sea of tasks, messages, and calls that require her attention, often while she should be sleeping. This situation leads to missed tasks, forgotten appointments, and a sense of being ""stuck."" Priya's daily routine is characterized by a constant state of alertness, making it difficult for her to relax or recharge.
+
+Key Objectives:
+- Manage the demands of rotating hospital shifts
+- Balance caregiving responsibilities with personal needs
+
+Primary Pain Points:
+- Feeling overwhelmed and drowning in tasks and messages
+- Missing important tasks or appointments due to lack of sleep or attention
+- Struggling to maintain a sense of normalcy and relaxation in daily life
+
+Important Context:
+- Priya's work schedule is unpredictable, leading to irregular sleep patterns and fatigue.
+- Her caregiving responsibilities for her mother add to the emotional burden and stress.",validation,summary,deep
+ETHNO-006,1.0,hard,4.3957,1.0,,,,2,1.0,614,Complete,test,completeness,deep
+ETHNO-006,,hard,8.1175,1.0,5.628378800000064,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.25,141,0.25,418,"Problem Summary:
+
+Noah is struggling to understand how his changed schedule is affecting his daily life and routines. He feels overwhelmed and stuck, describing the past week as ""chaotic."" Noah's goal is to identify whether specific aspects of his routine are exacerbating his stress.
+
+Key Objectives:
+- Identify sources of increased stress
+- Reassess the impact of schedule changes on daily life
+- Develop strategies for managing stress
+
+Primary Pain Points:
+- Feeling overwhelmed and stuck in his current situation
+- Difficulty understanding how his changed schedule is affecting him
+- Struggling to cope with the emotional toll of chaotic week
+
+Important Context:
+- Noah's recent schedule change has caused significant disruption to his routine.",test,summary,deep
+ETHNO-007,1.0,medium,4.4329,1.0,,,,2,1.0,629,Complete,test,completeness,deep
+ETHNO-007,,medium,10.5628,1.0,6.075474100012798,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.6666666666666666,215,0.3333,433,"Problem Summary:
+
+Amina is struggling to establish a boundary between her work and personal life due to the constant need to check customer messages at night. This has led to exhaustion, affecting not only her sleep but also her ability to perform well in school for her children's drop-off. Amina feels stuck and overwhelmed, as she does not want to ignore genuine emergencies while setting boundaries.
+
+Key Objectives:
+- Establish a clear boundary between work and personal life
+- Manage stress and maintain emotional well-being
+- Balance professional responsibilities with family obligations
+
+Primary Pain Points:
+- Difficulty disconnecting from work-related tasks outside of working hours
+- Feeling overwhelmed by the constant need to respond to customer messages at night
+- Struggling to set boundaries that do not lead to feelings of guilt or anxiety
+
+Important Context:
+- Amina's role requires her to be available for customer inquiries 24/7
+- She has children who require her attention during school drop-off hours, creating a conflicting schedule
+- Amina values being responsive to genuine emergencies while also needing time to rest and recharge",test,summary,deep
+ETHNO-008,1.0,hard,4.4061,1.0,,,,2,1.0,628,Complete,test,completeness,deep
+ETHNO-008,,hard,8.9328,1.0,6.532706000027247,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.6,165,0.32,432,"Problem Summary:
+
+Leo, a 26-year-old recent transplant, feels stuck and uncertain about building a life in his new location. He expresses a desire for direction but is struggling to make decisions about work, friends, and daily routines.
+
+Key Objectives:
+- Establish a sense of stability and routine
+- Develop meaningful relationships with others
+- Discover a fulfilling career path
+
+Primary Pain Points:
+- Feeling overwhelmed by the need to create a life from scratch
+- Difficulty in making decisions due to fear of making the wrong choice
+- Struggling to find purpose and direction in his new environment
+
+Important Context:
+- Leo's recent move has led to feelings of isolation and disconnection from familiar networks and routines.
+- He is uncertain about how to navigate the local community, access resources, and build relationships with like-minded individuals.",test,summary,deep
+ETHNO-001,0.0,easy,2.8879,0.0,,,,17,0.0,245,"Incomplete
+
+What's driving your desire to study consistently without panicking every night?",development,completeness,lite
+ETHNO-001,,easy,7.1902,1.0,5.764036899956409,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.8,142,0.36,254,"Problem Summary:
+Maya struggles with procrastination and inconsistent studying habits, leading to poor sleep quality and increased stress levels. This affects her academic performance and overall well-being.
+
+Key Objectives:
+- Develop a consistent study routine
+- Reduce feelings of guilt and anxiety associated with late-night scrolling
+- Improve sleep quality
+
+Primary Pain Points:
+- Feeling overwhelmed and unable to focus on studying due to procrastination
+- Guilt and shame after spending hours scrolling instead of studying
+- Poor sleep quality resulting from stress and lack of relaxation before bed
+
+Important Context:
+- Finals are approaching, increasing pressure to perform well academically
+- Maya's current study habits have led to feelings of burnout and decreased motivation",development,summary,lite
+ETHNO-002,1.0,medium,3.0885,0.0,5.27616670000134,"{""followup_relevance"": 0.8, ""warmth"": 0.9, ""atomicity"": 0.7, ""non_redundancy"": 0.6, ""overall"": 0.8, ""reason"": ""The follow-up question targets the documented missing dimension of 'direction' and is relevant to the user's expressed struggle with being burned out from work.""}",,36,0.8,215,"Based on the conversation history, I would mark the problem as COMPLETE. The user has already expressed their struggle with being burned out from work and implied that it matters to them.",development,completeness,lite
+ETHNO-002,,medium,7.583,1.0,5.428439499984961,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.4,154,0.28,271,"Problem Summary:
+Jon, a 38-year-old parent, is struggling with the emotional toll of carrying work-related stress into his personal life, particularly during family time. This affects his ability to be present and engaged with his children.
+
+Key Objectives:
+- Establish clear boundaries between work and family life
+- Regain energy and reduce burnout
+- Improve overall well-being
+
+Primary Pain Points:
+- Feeling drained and depleted after work hours
+- Difficulty disconnecting from work-related tasks during family time
+- Struggling to be fully present and engaged with children due to work stress
+
+Important Context:
+- Jon values his role as a parent and wants to prioritize family time
+- He is not seeking to quit his job, but rather find ways to manage work-related stress",development,summary,lite
+ETHNO-003,0.0,hard,4.2497,0.0,,,,64,0.0,240,"Based on the conversation history, I would mark the problem as COMPLETE.
+
+The user has already provided a clear statement of their struggle with managing their finances and feeling overwhelmed by unexpected fees. They have also implied that it matters to them because it's causing them stress and anxiety (""I just can't deal with it lately"").",development,completeness,lite
+ETHNO-003,,hard,6.6838,1.0,5.775037500017788,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.5,129,0.3,249,"Problem Summary:
+Elena is struggling with managing her finances, as recurring fees are appearing without clear sources or explanations. This issue matters to her because it causes stress and uncertainty about where to start addressing the problem.
+
+Key Objectives:
+- Gain clarity on the source of recurring fees
+- Develop a plan to manage and reduce financial uncertainty
+
+Primary Pain Points:
+- Feeling overwhelmed by the lack of transparency around fees
+- Difficulty in identifying and addressing the root cause of the issue
+- Emotional distress caused by the stress of managing finances
+
+Important Context:
+- Elena is experiencing financial difficulties, which may be contributing to her frustration with the recurring fees.",development,summary,lite
+ETHNO-004,0.0,medium,4.6537,0.0,,,,68,0.0,246,"Based on the conversation history, I would mark the problem as COMPLETE.
+
+The user is struggling with feeling lonely and isolated since retiring, and it matters to them because they want more regular human contact. The issue seems to be a fundamental need for social interaction and connection that is not being met by current solutions (apps or driving at night).",validation,completeness,lite
+ETHNO-004,,medium,6.7754,1.0,5.887717400037218,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.6666666666666666,129,0.3333,255,"Problem Summary:
+Darius, a 67-year-old retiree, is struggling with feelings of loneliness and disconnection after retiring. He finds that his days feel empty and he can go weeks without engaging in meaningful conversations. This lack of social interaction matters to him as it affects his mental well-being and sense of purpose.
+
+Key Objectives:
+- Establish regular, face-to-face interactions
+- Overcome the feeling of isolation and loneliness
+
+Primary Pain Points:
+- Lack of spontaneous conversation opportunities
+- Feeling disconnected from others due to retirement
+
+Important Context:
+- Retirement has led to a significant change in Darius's daily routine and social life.",validation,summary,lite
+ETHNO-005,1.0,hard,4.9398,0.0,5.777491600019857,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",,82,0.6,216,"Based on the conversation history, I would mark the problem as COMPLETE. 
+
+The user has already expressed a general feeling of frustration with something slipping through the cracks, which suggests that they are struggling with a specific issue that is causing them concern. The fact that they have shared their sentiment without elaborating further implies that they may be ready to move on to deeper exploration or hand it off to another interviewer.
+
+Complete",validation,completeness,lite
+ETHNO-005,,hard,8.1837,1.0,5.314644899975974,"{""faithfulness"": 0.9, ""coverage"": 0.8, ""emotional_fidelity"": 0.7, ""concision"": 0.6, ""no_hallucination"": 1.0, ""overall"": 0.83, ""reason"": ""The output accurately reflects the reference data, with minor deviations in emotional fidelity and concision.""}",0.8333333333333334,167,0.8647,278,"Problem Summary:
+Priya, a 44-year-old caregiver, is struggling to manage her workload and personal responsibilities due to the demands of rotating hospital shifts and caring for her mother. She feels overwhelmed by the constant influx of messages and calls while she should be sleeping, leading to missed tasks and forgotten appointments.
+
+Key Objectives:
+- Improve work-life balance
+- Enhance ability to prioritize tasks effectively
+- Reduce stress related to caregiving responsibilities
+
+Primary Pain Points:
+- Difficulty in managing multiple responsibilities simultaneously
+- Feeling overwhelmed by the constant flow of messages and calls
+- Struggling to maintain a sense of control over her schedule and tasks
+
+Important Context:
+- Rotating hospital shifts create unpredictable schedules, making it challenging to plan personal time.
+- Caring for an elderly mother adds emotional and practical demands on Priya's life.",validation,summary,lite
+ETHNO-006,0.0,hard,4.4885,0.0,,,,68,0.0,232,"Based on the conversation history, I would mark the problem as COMPLETE. 
+
+The user has already expressed their desire to understand whether anything in their routine is making it worse after a chaotic week due to a schedule change. This indicates that they have identified a specific issue and are seeking clarification or resolution.
+
+No further follow-up questions are needed.",test,completeness,lite
+ETHNO-006,,hard,7.4539,1.0,5.820275000005495,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.75,156,0.35,241,"Problem Summary:
+Noah is struggling with the impact of a recent schedule change on his daily routine, which has caused chaos and disrupted his normal functioning. This issue matters to him as it affects his overall well-being and ability to manage his time effectively.
+
+Key Objectives:
+- Regain control over his schedule
+- Reduce stress and anxiety related to the changed routine
+
+Primary Pain Points:
+- Feeling overwhelmed by the sudden changes in his daily routine
+- Difficulty adjusting to new commitments and responsibilities
+- Struggling to maintain a sense of normalcy and stability
+
+Important Context:
+- The schedule change occurred last week, causing significant disruption to Noah's usual routine.
+- He is seeking to understand whether any aspects of his current routine are contributing to the worsening effects of the schedule change.",test,summary,lite
+ETHNO-007,1.0,medium,2.3518,1.0,,,,2,1.0,247,Complete,test,completeness,lite
+ETHNO-007,,medium,8.2771,1.0,5.823312500026077,"{""faithfulness"": 0.9, ""coverage"": 0.8, ""emotional_fidelity"": 0.7, ""concision"": 0.6, ""no_hallucination"": 1.0, ""overall"": 0.83, ""reason"": ""The output demonstrates strong faithfulness to the reference data, but lacks emotional fidelity and concision in its description of Amina's pain points.""}",0.6666666666666666,175,0.8313,256,"Problem Summary:
+Amina struggles with the constant need to check customer messages at night, which is affecting her sleep and energy levels. This issue matters because it impacts her ability to perform well in school and take care of her responsibilities. Amina wants to establish a boundary that allows her to manage her work and personal life without feeling overwhelmed or ignored.
+
+Key Objectives:
+- Establish a clear boundary for checking customer messages
+- Ensure the boundary is reasonable and does not ignore genuine emergencies
+- Improve overall work-life balance
+
+Primary Pain Points:
+- Difficulty sleeping due to constant notifications
+- Feeling exhausted and drained from managing work and school responsibilities
+- Struggling to disconnect from work-related tasks outside of working hours
+
+Important Context:
+- Amina's job requires her to be available for customer inquiries at night
+- She has school drop-off responsibilities that require her attention during the day",test,summary,lite
+ETHNO-008,0.0,hard,4.3021,0.0,,,,69,0.0,246,"Based on the conversation history, I would mark the problem as COMPLETE.
+
+The user has already provided a clear statement of their struggle (feeling uncertain about work, friends, and daily activities) and expressed why it matters to them (wanting direction). This indicates that they have articulated their issue in a way that is understandable and relatable.",test,completeness,lite
+ETHNO-008,,hard,6.7321,1.0,5.7538424000376835,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.4,130,0.28,255,"Problem Summary:
+Leo, a 26-year-old recent transplant, is struggling to establish direction in his life. He feels uncertain about his career path, friendships, and daily activities, leading to feelings of indecision and frustration.
+
+Key Objectives:
+- Find a sense of stability and consistency
+- Develop a clear plan for his future
+- Establish meaningful relationships
+
+Primary Pain Points:
+- Feeling lost and uncertain about his life's direction
+- Difficulty making decisions due to conflicting desires and priorities
+- Struggling to create a fulfilling daily routine
+
+Important Context:
+- Recent move to a new location, potentially contributing to feelings of disorientation and uncertainty.",test,summary,lite

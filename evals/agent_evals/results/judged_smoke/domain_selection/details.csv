@@ -1,0 +1,47 @@
+﻿case_id,difficulty,elapsed_seconds,f1,format_valid,irrelevant_selection_rate,judge_elapsed_seconds,judge_scores,output_tokens,overall_score,precision,prompt_tokens,raw_output,recall,split,task,variant
+ETHNO-001,easy,19.6738,0.0,0.0,0.0,23.704528599977493,"{""relevance"": 0.8, ""coverage"": 0.7, ""focus"": 0.9, ""priority_order"": 0.85, ""overall"": 0.83, ""reason"": ""The output meets the discipline criteria, but lacks coverage of aspirational domains and includes irrelevant subdomains.""}",223,0.3075,0.0,493,"{
+    ""Context layer"": {
+        ""Home environment"": [],
+        ""Relationships"": []
+    },
+    ""Mechanism layer"": {
+        ""Stress"": [""Emotions"", ""Coping mechanisms""],
+        ""Sleep"": [""Energy""]
+    },
+    ""Surface layer"": [
+        ""Studying"",
+        ""Finals""
+    ]
+}
+
+This selection meets the discipline criteria:
+
+1. The domains and subdomains included are relevant to understanding how the problem is sustained.
+2. Only subdomains that pull their weight have been selected for each domain.
+3. New domains (""Context layer"") have been invented when necessary, with plain names.
+4. A focused set has been chosen over broad coverage.
+5. Domains have been ordered from most to least central to the problem.
+
+The ""Context layer"" includes home environment and relationships as they may influence the person's behavior and emotions related to studying. The ""Mechanism layer"" explores stress, sleep, and their effects on emotions and energy levels. The ""Surface layer"" explicitly mentions studying and finals, which are the core of the problem statement.",0.0,development,domain_selection,deep
+ETHNO-001,easy,30.5401,0.7692307692307693,1.0,0.0,19.521251199999824,"{""relevance"": 0.8, ""coverage"": 0.9, ""focus"": 0.7, ""priority_order"": 0.6, ""overall"": 0.75, ""reason"": ""The output partially covers required categories (Behavioral, Physical, Psychological) but includes irrelevant categories and lacks focus on priority order.""}",181,0.8438,0.625,249,"```json
+{
+  ""Physical"": [
+    ""Sleep""
+  ],
+  ""Psychological"": [
+    ""Stress"",
+    ""Emotions"",
+    ""Coping mechanisms""
+  ],
+  ""Behavioral"": [
+    ""Routine"",
+    ""Technology usage"",
+    ""Decision-making"",
+    ""Productivity""
+  ]
+}
+```
+
+I have selected the domains and subdomains that are most relevant to the problem of procrastination and studying. The Physical domain is included because sleep quality can impact motivation and focus, while the Psychological domain covers stress, emotions, and coping mechanisms, which are all likely contributing factors to procrastination. The Behavioral domain includes routine, technology usage, decision-making, and productivity, as these aspects of daily life can influence how one approaches studying.
+
+The selected domains and subdomains provide a solid foundation for understanding the underlying causes of procrastination and developing strategies for consistent studying.",1.0,development,domain_selection,lite

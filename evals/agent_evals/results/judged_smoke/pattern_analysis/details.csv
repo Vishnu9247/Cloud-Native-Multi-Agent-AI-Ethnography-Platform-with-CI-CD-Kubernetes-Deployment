@@ -1,0 +1,42 @@
+﻿case_id,difficulty,elapsed_seconds,empty_decision_accuracy,format_valid,judge_elapsed_seconds,judge_scores,output_tokens,overall_score,pattern_cue_recall,prompt_tokens,question_mark_rate,raw_output,recommendation_cue_recall,split,target_cue_recall,task,variant
+ETHNO-006,hard,11.7199,,0.0,26.071402200032026,"{""problem_specificity"": 0.0, ""sequence_trigger_rhythm_coverage"": 0.0, ""exception_coverage"": 0.0, ""open_endedness"": 0.0, ""atomicity"": 1.0, ""non_redundancy"": 1.0, ""overall"": 0.0, ""reason"": ""The model output is empty, indicating a lack of problem-specificity and no attempt to address the question target cues or context.""}",204,0.0,,589,0.0,"[
+    ""Can you walk me through the last time your schedule changed and how it affected your daily routine?"",
+    ""Picture a typical morning when you wake up feeling rested, what's the first thing you do?"",
+    ""What happens before you start checking work emails in the morning?"",
+    ""When is it easier for you to get out of bed on weekends compared to weekdays?"",
+    ""Can you describe the environment where you usually take breaks at work?"",
+    ""Walk me through a recent day when you felt like you were getting everything done, what was different about your pace or focus?"",
+    ""What triggers your decision to start checking social media as soon as you wake up?"",
+    ""Can you think of a time when you successfully managed your schedule and workload without feeling overwhelmed, what did that look like?"",
+    ""How does the lighting in your home affect your mood or energy levels in the evening?"",
+    ""Picture a typical day when you feel most productive, what's the last thing you do before bed?""",,test,0.0,pattern_questions,deep
+ETHNO-006,hard,29.8121,0.0,1.0,22.173873600026127,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",60,0.15,0.0,621,,"[
+  ""He works one double shift after a coworker calls out, and then orders takeout, which he reports causes him to sleep poorly the next night."",
+  ""Similar schedule disruptions have not happened for months, suggesting that his current routine is not the cause of his recent chaos""
+]",,test,,identify_patterns,deep
+ETHNO-006,hard,20.961,,1.0,23.548188300046604,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",104,0.15,,621,,"[
+  ""Anchor one small work block to an existing fixed point in the day, such as right after morning coffee, because the user's plans currently collapse at unstructured transition moments."",
+  ""Use a simple 'done' list instead of a long to-do list to help him focus on completing one task before moving on to the next, since the current approach seems to fuel procrastination."",
+  ""Schedule entertainment as a defined evening reward so it stops functioning as the automatic response to stress earlier in the day.""
+]",0.0,test,,recommendations,deep
+ETHNO-006,hard,26.1056,,0.0,6.027103899978101,"{""problem_specificity"": 0.0, ""sequence_trigger_rhythm_coverage"": 0.0, ""exception_coverage"": 0.0, ""open_endedness"": 0.0, ""atomicity"": 1.0, ""non_redundancy"": 1.0, ""overall"": 0.0, ""reason"": ""The model output is empty, indicating a lack of problem-specificity and no attempt to address the question target cues or context.""}",187,0.0,,281,0.0,"[
+    ""Can you describe your morning routine when you wake up feeling tired or groggy?"",
+    ""How do you handle it when your work schedule changes unexpectedly?"",
+    ""What happens right before you start to feel overwhelmed with tasks?"",
+    ""Are there specific times of the day when you feel more energized, and what's going on then?"",
+    ""Can you walk me through a typical evening routine when you're trying to wind down?"",
+    ""How do you usually react when your plans change or unexpected events occur?"",
+    ""Is there anything that helps you get back on track after feeling disorganized or scattered?"",
+    ""What does a typical day look like for you when you feel most productive and focused?"",
+    ""Are there any specific tasks or activities that make you feel more energized, and what is it about them?"",
+    ""Can you describe a situation where your routine actually helped you cope with the chaos?""",,test,0.0,pattern_questions,lite
+ETHNO-006,hard,8.0312,0.0,1.0,15.871832099976018,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",28,0.15,0.0,352,,"[
+  ""Disruptions in routine lead to poor sleep and subsequent stress."",
+  ""Similar schedule disruptions have not happened for months""
+]",,test,,identify_patterns,lite
+ETHNO-006,hard,16.9365,,1.0,5.732741300016642,"{""pattern_traceability"": 0.5, ""personalization"": 0.8, ""actionability"": 0.9, ""feasibility"": 0.7, ""rationale_quality"": 0.6, ""constraint_sensitivity"": 1.0, ""overall"": 0.83, ""reason"": ""The model provided actionable and feasible recommendations, but lacked strong rationale quality due to the limited evidence base.""}",107,0.7562,,379,,"[
+  ""Schedule a daily review of your routine at the same time each day to help you stay on track and catch any potential disruptions early."",
+  ""Create a 'pre-shift' checklist to ensure you're prepared for work, reducing stress caused by last-minute adjustments."",
+  ""Set a specific bedtime and stick to it, even on weekends, to maintain a consistent sleep schedule and reduce stress."",
+  ""Plan one relaxing evening activity per week, such as reading or meditation, to help manage stress and improve overall well-being.""
+]",0.3333333333333333,test,,recommendations,lite

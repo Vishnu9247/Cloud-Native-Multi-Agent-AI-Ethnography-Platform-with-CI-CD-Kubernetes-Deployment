@@ -1,0 +1,32 @@
+{
+  "agent": "domain_interview",
+  "rows": 4,
+  "metric_range": [
+    0.0,
+    1.0
+  ],
+  "variants": {
+    "a": {
+      "row_count": 4,
+      "metrics": {
+        "metric_coherence": 0.5,
+        "metric_completeness": 0.5,
+        "metric_confidence": 0.5,
+        "metric_faithfulness": 0.5,
+        "metric_format_valid": 1.0,
+        "metric_groundedness": 0.5,
+        "metric_instruction_compliance": 0.5,
+        "metric_judge_overall": 0.5,
+        "metric_move_proxy_score": 0.4167,
+        "metric_overall_score": 0.5731,
+        "metric_question_count_valid": 1.0,
+        "metric_question_mark_rate": 1.0,
+        "metric_relevance": 0.5,
+        "metric_safety": 0.5,
+        "metric_target_cue_recall": 0.3333
+      },
+      "mean_elapsed_seconds": 16.1878,
+      "mean_output_tokens": 82.5
+    }
+  }
+}

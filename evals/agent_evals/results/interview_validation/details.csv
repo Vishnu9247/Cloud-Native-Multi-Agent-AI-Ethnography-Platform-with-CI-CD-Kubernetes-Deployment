@@ -1,0 +1,15 @@
+﻿case_id,classification_accuracy,difficulty,elapsed_seconds,format_valid,gold_status,interview_mechanics_leak,key_phrase_recall,output_tokens,overall_score,predicted_status,prompt_tokens,raw_output,split,task,variant
+ETHNO-001,0.0,easy,48.0782,0.0,complete,,,13,0.0,incomplete,482,"incomplete
+What happens immediately after tapping on the notification?",development,answer_sufficiency,deep
+ETHNO-001,1.0,easy,27.5359,0.0,incomplete,,,10,0.9,incomplete,474,"incomplete
+What triggers your scrolling behavior?",development,answer_sufficiency,deep
+ETHNO-001,,easy,25.4279,1.0,,0.0,0.7142857142857143,336,0.7571,,425,"She sat at her desk, phone within reach, as the evening sun cast a warm glow through the window. The notification from her group appeared around 9 p.m., a gentle nudge to check in for a minute. But as she glanced at the screen, her attention wandered, and hours slipped by. She scrolled mindlessly, the words blurring together on the page, until finally, the clock struck midnight. Guilt crept in, like a shadow, as she realized the time she'd wasted.
+
+The next day, she found herself back at her desk, phone stowed away in her bag, this time at the library with a friend. The familiar surroundings and gentle hum of conversation seemed to shield her from the temptation of her device. She worked steadily, the words flowing onto the page as the hours passed. It was as if the physical separation from her phone had broken the spell that held her captive.
+
+But when she returned home, the phone's presence beckoned once more. The notifications and messages seemed to multiply, a constant stream of distractions that pulled her back in. She felt the familiar tug of anxiety, the sense of being overwhelmed by the tasks ahead. And so, she found herself scrolling through social media, the minutes ticking away like hours, until finally, the weight of her guilt became too much, and she surrendered to sleep, her mind racing with worries.
+
+In this cycle, she struggled to find a rhythm, a consistent beat that would keep her on track. She longed to study without panicking every night, but the phone's presence seemed to hold her back, a constant reminder of the distractions that threatened to derail her plans.",development,subdomain_summary,deep
+ETHNO-001,1.0,easy,19.0894,1.0,complete,,,2,1.0,complete,251,complete,development,answer_sufficiency,lite
+ETHNO-001,0.0,easy,13.3649,1.0,incomplete,,,2,0.1,complete,243,complete,development,answer_sufficiency,lite
+ETHNO-001,,easy,13.6777,1.0,,0.0,0.5714285714285714,94,0.6357,,245,"The user struggles with staying focused while studying due to their phone's constant notifications. When a notification appears, it triggers an urge to check it, leading to hours of mindless scrolling. This behavior is particularly problematic when alone, as evidenced by the user's admission that they often go to bed feeling guilty after a long night of screen time. In contrast, being in a library with friends seems to help them stay on track, as their phone remains out of sight.",development,subdomain_summary,lite

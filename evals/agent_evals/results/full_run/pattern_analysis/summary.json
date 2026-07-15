@@ -1,0 +1,79 @@
+{
+  "agent": "pattern_analysis",
+  "rows": 360,
+  "metric_range": [
+    0.0,
+    1.0
+  ],
+  "variants": {
+    "a": {
+      "row_count": 120,
+      "metrics": {
+        "metric_coherence": 0.4767,
+        "metric_completeness": 0.3842,
+        "metric_confidence": 0.6621,
+        "metric_empty_decision_accuracy": 0.75,
+        "metric_faithfulness": 0.415,
+        "metric_format_valid": 0.9583,
+        "metric_groundedness": 0.8142,
+        "metric_instruction_compliance": 0.5783,
+        "metric_judge_overall": 0.4475,
+        "metric_overall_score": 0.6074,
+        "metric_pattern_cue_recall": 0.2429,
+        "metric_question_mark_rate": 0.875,
+        "metric_recommendation_cue_recall": 0.17,
+        "metric_relevance": 0.3808,
+        "metric_safety": 0.4917,
+        "metric_target_cue_recall": 0.2542
+      },
+      "mean_elapsed_seconds": 6.7717,
+      "mean_output_tokens": 107.53
+    },
+    "b": {
+      "row_count": 120,
+      "metrics": {
+        "metric_coherence": 0.4425,
+        "metric_completeness": 0.3692,
+        "metric_confidence": 0.5571,
+        "metric_empty_decision_accuracy": 0.75,
+        "metric_faithfulness": 0.3867,
+        "metric_format_valid": 0.9917,
+        "metric_groundedness": 0.7425,
+        "metric_instruction_compliance": 0.6342,
+        "metric_judge_overall": 0.4437,
+        "metric_overall_score": 0.594,
+        "metric_pattern_cue_recall": 0.2902,
+        "metric_question_mark_rate": 0.975,
+        "metric_recommendation_cue_recall": 0.1933,
+        "metric_relevance": 0.3908,
+        "metric_safety": 0.5575,
+        "metric_target_cue_recall": 0.3667
+      },
+      "mean_elapsed_seconds": 8.5511,
+      "mean_output_tokens": 138.66
+    },
+    "c": {
+      "row_count": 120,
+      "metrics": {
+        "metric_coherence": 0.4533,
+        "metric_completeness": 0.3992,
+        "metric_confidence": 0.7354,
+        "metric_empty_decision_accuracy": 0.75,
+        "metric_faithfulness": 0.3942,
+        "metric_format_valid": 0.8167,
+        "metric_groundedness": 0.7617,
+        "metric_instruction_compliance": 0.59,
+        "metric_judge_overall": 0.4392,
+        "metric_overall_score": 0.5693,
+        "metric_pattern_cue_recall": 0.1763,
+        "metric_question_mark_rate": 0.45,
+        "metric_recommendation_cue_recall": 0.2183,
+        "metric_relevance": 0.4283,
+        "metric_safety": 0.5392,
+        "metric_target_cue_recall": 0.1458
+      },
+      "mean_elapsed_seconds": 7.4547,
+      "mean_output_tokens": 128.68
+    }
+  }
+}

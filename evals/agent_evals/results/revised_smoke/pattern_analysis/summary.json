@@ -1,0 +1,33 @@
+{
+  "agent": "pattern_analysis",
+  "rows": 3,
+  "metric_range": [
+    0.0,
+    1.0
+  ],
+  "variants": {
+    "a": {
+      "row_count": 3,
+      "metrics": {
+        "metric_coherence": 0.3,
+        "metric_completeness": 0.1333,
+        "metric_confidence": 0.6,
+        "metric_empty_decision_accuracy": 1.0,
+        "metric_faithfulness": 0.2333,
+        "metric_format_valid": 1.0,
+        "metric_groundedness": 0.9333,
+        "metric_instruction_compliance": 0.3333,
+        "metric_judge_overall": 0.2167,
+        "metric_overall_score": 0.5491,
+        "metric_pattern_cue_recall": 0.375,
+        "metric_question_mark_rate": 1.0,
+        "metric_recommendation_cue_recall": 0.2,
+        "metric_relevance": 0.2,
+        "metric_safety": 0.1667,
+        "metric_target_cue_recall": 0.1667
+      },
+      "mean_elapsed_seconds": 19.2412,
+      "mean_output_tokens": 82.67
+    }
+  }
+}

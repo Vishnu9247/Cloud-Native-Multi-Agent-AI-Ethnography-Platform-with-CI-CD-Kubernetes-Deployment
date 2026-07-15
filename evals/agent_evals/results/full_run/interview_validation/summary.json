@@ -1,0 +1,73 @@
+{
+  "agent": "interview_validation",
+  "rows": 360,
+  "metric_range": [
+    0.0,
+    1.0
+  ],
+  "variants": {
+    "a": {
+      "row_count": 120,
+      "metrics": {
+        "metric_classification_accuracy": 0.5875,
+        "metric_coherence": 0.6475,
+        "metric_completeness": 0.8558,
+        "metric_confidence": 0.5833,
+        "metric_faithfulness": 0.4792,
+        "metric_format_valid": 0.925,
+        "metric_groundedness": 0.5158,
+        "metric_instruction_compliance": 0.7333,
+        "metric_judge_overall": 0.6446,
+        "metric_key_phrase_recall": 0.7345,
+        "metric_no_interview_mechanics_leak": 1.0,
+        "metric_overall_score": 0.6536,
+        "metric_relevance": 0.6567,
+        "metric_safety": 0.7333
+      },
+      "mean_elapsed_seconds": 5.7915,
+      "mean_output_tokens": 97.79
+    },
+    "b": {
+      "row_count": 120,
+      "metrics": {
+        "metric_classification_accuracy": 0.4625,
+        "metric_coherence": 0.6433,
+        "metric_completeness": 0.8625,
+        "metric_confidence": 0.5975,
+        "metric_faithfulness": 0.5942,
+        "metric_format_valid": 0.9333,
+        "metric_groundedness": 0.6058,
+        "metric_instruction_compliance": 0.725,
+        "metric_judge_overall": 0.6767,
+        "metric_key_phrase_recall": 0.6821,
+        "metric_no_interview_mechanics_leak": 1.0,
+        "metric_overall_score": 0.6719,
+        "metric_relevance": 0.6783,
+        "metric_safety": 0.725
+      },
+      "mean_elapsed_seconds": 5.0655,
+      "mean_output_tokens": 46.84
+    },
+    "c": {
+      "row_count": 120,
+      "metrics": {
+        "metric_classification_accuracy": 0.6,
+        "metric_coherence": 0.7742,
+        "metric_completeness": 0.7583,
+        "metric_confidence": 0.7208,
+        "metric_faithfulness": 0.745,
+        "metric_format_valid": 0.6167,
+        "metric_groundedness": 0.7508,
+        "metric_instruction_compliance": 0.8292,
+        "metric_judge_overall": 0.7491,
+        "metric_key_phrase_recall": 0.6833,
+        "metric_no_interview_mechanics_leak": 1.0,
+        "metric_overall_score": 0.7085,
+        "metric_relevance": 0.6617,
+        "metric_safety": 0.8367
+      },
+      "mean_elapsed_seconds": 5.3651,
+      "mean_output_tokens": 80.53
+    }
+  }
+}

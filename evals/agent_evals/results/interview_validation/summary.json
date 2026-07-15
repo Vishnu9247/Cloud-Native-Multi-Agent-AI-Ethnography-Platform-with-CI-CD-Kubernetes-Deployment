@@ -1,0 +1,20 @@
+{
+  "agent": "interview_validation",
+  "rows": 6,
+  "variants": {
+    "deep": {
+      "row_count": 3,
+      "overall_score": 0.5524,
+      "format_valid_rate": 0.3333,
+      "mean_elapsed_seconds": 33.6807,
+      "mean_output_tokens": 119.67
+    },
+    "lite": {
+      "row_count": 3,
+      "overall_score": 0.5786,
+      "format_valid_rate": 1.0,
+      "mean_elapsed_seconds": 15.3773,
+      "mean_output_tokens": 32.67
+    }
+  }
+}

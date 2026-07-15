@@ -1,0 +1,46 @@
+﻿case_id,difficulty,elapsed_seconds,f1,format_valid,irrelevant_selection_rate,output_tokens,overall_score,precision,prompt_tokens,raw_output,recall,split,task,variant
+ETHNO-001,easy,31.7112,0.0,0.0,0.0,201,0.1,0.0,493,"{
+    ""Context layer"": {
+        ""Home environment"": [],
+        ""Relationships"": []
+    },
+    ""Mechanism layer"": {
+        ""Stress"": [""Emotions"", ""Coping mechanisms""],
+        ""Sleep"": [""Energy""]
+    },
+    ""Surface layer"": [
+        ""Studying"",
+        ""Finals""
+    ]
+}
+
+This selection meets the discipline criteria:
+
+1. The domains and subdomains included are relevant to understanding how the problem is sustained.
+2. Only subdomains that pull their weight have been selected for each domain.
+3. No new domains or subdomains have been invented, as they do not clearly demand territory outside of the existing list.
+4. A focused set has been chosen over broad coverage.
+5. The domains are ordered from most to least central to the problem.
+
+The selected domains and subdomains provide a clear starting point for investigation, allowing the researcher to explore how stress, sleep, and studying habits interact to sustain the problem of procrastination.",0.0,development,domain_selection,deep
+ETHNO-001,easy,25.107,0.6666666666666666,1.0,0.0,151,0.7595,0.5714285714285714,249,"```json
+{
+  ""Physical"": [
+    ""Sleep""
+  ],
+  ""Psychological"": [
+    ""Stress"",
+    ""Emotions"",
+    ""Coping mechanisms""
+  ],
+  ""Behavioral"": [
+    ""Routine"",
+    ""Decision-making"",
+    ""Productivity""
+  ]
+}
+```
+
+I have selected the domains and subdomains that are most relevant to the problem of procrastination and studying. The Physical domain is included because sleep quality can impact motivation and focus, while the Psychological domain covers stress, emotions, and coping mechanisms, which are all important factors in procrastination.
+
+The Behavioral domain includes routine, decision-making, and productivity, as these aspects of behavior can influence how a person approaches studying and managing time effectively.",0.8,development,domain_selection,lite

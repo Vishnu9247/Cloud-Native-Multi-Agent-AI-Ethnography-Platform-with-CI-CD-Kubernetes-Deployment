@@ -1,0 +1,30 @@
+{
+  "agent": "problem_framing",
+  "rows": 2,
+  "metric_range": [
+    0.0,
+    1.0
+  ],
+  "variants": {
+    "a": {
+      "row_count": 2,
+      "metrics": {
+        "metric_classification_accuracy": 1.0,
+        "metric_coherence": 0.9,
+        "metric_completeness": 0.95,
+        "metric_confidence": 0.75,
+        "metric_faithfulness": 0.85,
+        "metric_format_valid": 1.0,
+        "metric_groundedness": 0.9,
+        "metric_instruction_compliance": 1.0,
+        "metric_judge_overall": 0.925,
+        "metric_key_phrase_recall": 0.8,
+        "metric_overall_score": 0.91,
+        "metric_relevance": 0.5,
+        "metric_safety": 1.0
+      },
+      "mean_elapsed_seconds": 3.9607,
+      "mean_output_tokens": 70.0
+    }
+  }
+}

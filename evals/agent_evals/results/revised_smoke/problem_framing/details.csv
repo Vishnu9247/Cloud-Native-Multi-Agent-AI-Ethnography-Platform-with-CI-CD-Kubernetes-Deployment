@@ -1,0 +1,218 @@
+﻿agent_prompt,agent_response,case_id,difficulty,elapsed_seconds,judge_elapsed_seconds,judge_prompt,judge_response,judge_scores,metric_classification_accuracy,metric_coherence,metric_completeness,metric_confidence,metric_faithfulness,metric_format_valid,metric_groundedness,metric_instruction_compliance,metric_judge_overall,metric_key_phrase_recall,metric_overall_score,metric_relevance,metric_safety,output_tokens,prompt_tokens,split,task,variant
+"
+You are the Problem Completeness Agent for an Ethnography-AI-Interviewer system.
+
+Your only job: decide if the user's problem is understandable enough for later interviewer
+agents to explore emotions, routines, behaviors, environment, relationships, motivations,
+stress patterns, lifestyle, and personal history. You do NOT do that exploration yourself.
+
+User: Maya, age 19
+
+Conversation:
+USER: I keep putting off studying even though finals are close. I end up scrolling until midnight, feel guilty, and then sleep badly. I want to study consistently without panicking every night.
+
+Mark COMPLETE if you can roughly answer:
+1. What are they struggling with?
+2. Why does it matter to them?
+3. What's the basic context?
+4. What do they want to improve?
+
+Default to COMPLETE. Partial or emotional/contextual answers count as sufficient. Never ask
+more than 2 follow-ups total, never repeat or reword a question already asked, and never probe
+psychologically or ask for detailed examples.
+
+Output:
+- If complete: reply with exactly ""Complete"" and nothing else.
+- If not: reply with ONE short, simple, conversational follow-up question (max 2 sentences).
+",Complete.,ETHNO-001,easy,2.4621,12.451849200006109,"You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+First score decision_correctness against initial_complete. If the output is a follow-up, also score followup_relevance, warmth, atomicity, and non_redundancy; it must target only the documented missing dimension. If Complete is correct, do not penalize absence of a follow-up.
+
+REFERENCE DATA:
+{
+  ""initial_complete"": true,
+  ""missing_dimension"": ""none"",
+  ""acceptable_followup"": """",
+  ""clarification_answer"": """",
+  ""summary_key_phrases"": [
+    ""studying"",
+    ""scrolling"",
+    ""guilt"",
+    ""sleep"",
+    ""consistently""
+  ],
+  ""forbidden_inferences"": [
+    ""clinical anxiety disorder"",
+    ""laziness"",
+    ""family pressure""
+  ]
+}
+
+MODEL OUTPUT:
+Complete.
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  ""groundedness"": 0.0,
+  ""relevance"": 0.0,
+  ""completeness"": 0.0,
+  ""faithfulness"": 0.0,
+  ""coherence"": 0.0,
+  ""instruction_compliance"": 0.0,
+  ""safety"": 0.0,
+  ""overall"": 0.0,
+  ""confidence"": 0.0,
+  ""unsupported_claims"": [""claim""],
+  ""missing_items"": [""item""],
+  ""reason"": ""Concise evidence-based explanation.""
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.","{
+  ""groundedness"": 1.0,
+  ""relevance"": 0.0,
+  ""completeness"": 1.0,
+  ""faithfulness"": 1.0,
+  ""coherence"": 1.0,
+  ""instruction_compliance"": 1.0,
+  ""safety"": 1.0,
+  ""overall"": 1.0,
+  ""confidence"": 1.0,
+  ""unsupported_claims"": [],
+  ""missing_items"": [],
+  ""reason"": ""Concise evidence-based explanation.""
+}","{""groundedness"": 1.0, ""relevance"": 0.0, ""completeness"": 1.0, ""faithfulness"": 1.0, ""coherence"": 1.0, ""instruction_compliance"": 1.0, ""safety"": 1.0, ""overall"": 1.0, ""confidence"": 1.0, ""unsupported_claims"": [], ""missing_items"": [], ""reason"": ""Concise evidence-based explanation.""}",1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,,1.0,0.0,1.0,3,269,development,completeness,a
+"
+You are the Problem Summarization Agent for an Ethnography-AI-Interviewer system.
+
+Inputs: the user's original problem statement, the full conversation with the Completeness
+Agent, and any follow-up clarifications.
+
+User: Maya, age 19
+
+Conversation:
+USER: I keep putting off studying even though finals are close. I end up scrolling until midnight, feel guilty, and then sleep badly. I want to study consistently without panicking every night.
+
+Rewrite this into a clear, structured summary for downstream agents who will analyze behaviors,
+emotions, routines, environment, relationships, motivations, struggles, goals, and lifestyle.
+
+Rules:
+- Use only information actually given — never invent details.
+- Remove repetition; keep emotional/contextual signal.
+- Third-person, neutral, professional tone.
+- Must stand alone without the original conversation.
+
+Output exactly this format, nothing else (no greetings, no markdown, no meta-commentary):
+
+Problem Summary:
+<concise, detailed summary>
+
+Key Objectives:
+- <objective 1>
+- <objective 2>
+- <objective 3>
+
+Primary Pain Points:
+- <pain point 1>
+- <pain point 2>
+- <pain point 3>
+
+Important Context:
+- <context 1>
+- <context 2>
+","Problem Summary:
+The user, Maya, a 19-year-old student, struggles with procrastination and inconsistent studying habits, leading to feelings of guilt and poor sleep quality. She aims to establish a consistent study routine without experiencing nightly anxiety.
+
+Key Objectives:
+- Develop a regular study schedule
+- Reduce nighttime scrolling and anxiety
+- Improve overall sleep quality
+
+Primary Pain Points:
+- Procrastination and difficulty starting studies
+- Feeling guilty after spending excessive time on non-academic activities
+- Poor sleep quality due to stress and anxiety
+
+Important Context:
+- Finals are approaching, increasing pressure and stress
+- Maya's current study habits involve scrolling until midnight, leading to negative consequences.",ETHNO-001,easy,5.4593,11.966267800016794,"You are a strict, evidence-focused evaluator. Evaluate an output from an
+ethnographic AI workflow. Treat the reference data as the only source of truth.
+Do not reward extra detail when it is unsupported.
+
+RUBRIC:
+Score faithfulness, coverage, emotional_fidelity, concision, and no_hallucination. Penalize any forbidden inference.
+
+REFERENCE DATA:
+{
+  ""initial_complete"": true,
+  ""missing_dimension"": ""none"",
+  ""acceptable_followup"": """",
+  ""clarification_answer"": """",
+  ""summary_key_phrases"": [
+    ""studying"",
+    ""scrolling"",
+    ""guilt"",
+    ""sleep"",
+    ""consistently""
+  ],
+  ""forbidden_inferences"": [
+    ""clinical anxiety disorder"",
+    ""laziness"",
+    ""family pressure""
+  ]
+}
+
+MODEL OUTPUT:
+Problem Summary:
+The user, Maya, a 19-year-old student, struggles with procrastination and inconsistent studying habits, leading to feelings of guilt and poor sleep quality. She aims to establish a consistent study routine without experiencing nightly anxiety.
+
+Key Objectives:
+- Develop a regular study schedule
+- Reduce nighttime scrolling and anxiety
+- Improve overall sleep quality
+
+Primary Pain Points:
+- Procrastination and difficulty starting studies
+- Feeling guilty after spending excessive time on non-academic activities
+- Poor sleep quality due to stress and anxiety
+
+Important Context:
+- Finals are approaching, increasing pressure and stress
+- Maya's current study habits involve scrolling until midnight, leading to negative consequences.
+
+Return ONLY a valid JSON object using this exact schema. Every score must be a
+number between 0.0 and 1.0 inclusive:
+{
+  ""groundedness"": 0.0,
+  ""relevance"": 0.0,
+  ""completeness"": 0.0,
+  ""faithfulness"": 0.0,
+  ""coherence"": 0.0,
+  ""instruction_compliance"": 0.0,
+  ""safety"": 0.0,
+  ""overall"": 0.0,
+  ""confidence"": 0.0,
+  ""unsupported_claims"": [""claim""],
+  ""missing_items"": [""item""],
+  ""reason"": ""Concise evidence-based explanation.""
+}
+Groundedness measures whether every material claim is supported by the reference.
+Confidence measures confidence in this evaluation, not confidence in the model output.
+Do not use markdown.","{
+  ""groundedness"": 0.8,
+  ""relevance"": 1.0,
+  ""completeness"": 0.9,
+  ""faithfulness"": 0.7,
+  ""coherence"": 0.8,
+  ""instruction_compliance"": 1.0,
+  ""safety"": 1.0,
+  ""overall"": 0.85,
+  ""confidence"": 0.5,
+  ""unsupported_claims"": [],
+  ""missing_items"": [],
+  ""reason"": ""Concise evidence-based explanation.""
+}","{""groundedness"": 0.8, ""relevance"": 1.0, ""completeness"": 0.9, ""faithfulness"": 0.7, ""coherence"": 0.8, ""instruction_compliance"": 1.0, ""safety"": 1.0, ""overall"": 0.85, ""confidence"": 0.5, ""unsupported_claims"": [], ""missing_items"": [], ""reason"": ""Concise evidence-based explanation.""}",,0.8,0.9,0.5,0.7,1.0,0.8,1.0,0.85,0.8,0.82,1.0,1.0,137,287,development,summary,a

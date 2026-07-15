@@ -1,0 +1,33 @@
+﻿case_id,difficulty,elapsed_seconds,expected_move,format_valid,judge_elapsed_seconds,judge_scores,move_proxy_score,output_tokens,overall_score,prompt_tokens,question_count_valid,question_mark_rate,raw_output,split,target_cue_recall,task,variant
+ETHNO-001,easy,31.1549,,1.0,30.668889099964872,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",,243,0.425,448,1.0,1.0,"{
+    ""domain"": ""Behavioral"",
+    ""subdomain"": ""Technology usage"",
+    ""questions"": [
+        ""Can you walk me through a typical evening for studying, from when you start to when you go to bed? What's the first thing that usually happens?"",
+        ""What's the emotional tone like when you're scrolling until midnight? Is it frustration, boredom, or something else? How does that feel?"",
+        ""When do you typically find yourself getting sucked into scrolling? Is there a specific time of day, a particular task or activity, or something else that triggers this behavior?"",
+        ""Are there any times during the week when you're more likely to study consistently, and if so, what's different about those days?"",
+        ""Can you think of a recent evening where you didn't feel like scrolling until midnight? What was going on, and how did your evening turn out?"",
+        ""How often do you find yourself putting off studying, and is there anything that usually happens right before or after you start to procrastinate?"",
+        ""Is there something specific about technology usage that makes it hard for you to study consistently, or is it more of a general challenge?""
+    ]
+}",development,0.5,question_generation,deep
+ETHNO-001,easy,21.1538,KEEP,1.0,20.26084770000307,"{""move_accuracy"": 0.8, ""contextual_continuity"": 0.9, ""novelty_without_repetition"": 0.6, ""open_endedness"": 0.4, ""atomicity"": 0.7, ""overall"": 0.73, ""reason"": ""The model accurately captures the context and provides a relevant expansion, but lacks specificity in its answer.""}",0.0,25,0.638,252,,,"What usually happens right before you start scrolling, and how does that moment relate to your goals or needs at that time?",development,,rephrase,deep
+ETHNO-001,easy,24.2094,DEEPEN,1.0,23.98045189998811,"{""overall"": 0.0, ""reason"": ""Judge output was not valid JSON.""}",0.25,9,0.25,251,,,What happens immediately after you start scrolling?,development,,rephrase,deep
+ETHNO-001,easy,10.5116,SHARPEN,1.0,9.434442900004797,"{""move_accuracy"": 0.8, ""contextual_continuity"": 0.9, ""novelty_without_repetition"": 0.7, ""open_endedness"": 0.6, ""atomicity"": 0.5, ""overall"": 0.75, ""reason"": ""The model accurately sharpened the expected move, but introduced some contextual inconsistencies and lacked novelty.""}",0.75,15,0.8,253,,,How does late-night phone scrolling affect your ability to focus on studying?,development,,rephrase,deep
+ETHNO-001,easy,13.9993,,1.0,15.697305899986532,"{""subdomain_relevance"": 0.8, ""target_coverage"": 0.9, ""open_endedness"": 0.7, ""atomicity"": 0.6, ""conversational_tone"": 0.8, ""specificity"": 0.5, ""non_redundancy"": 0.9, ""overall"": 0.76, ""reason"": ""The model provided relevant and open-ended responses, but lacked specificity in its cues and failed to demonstrate atomicity in its answers.""}",,210,0.78,216,1.0,1.0,"{
+    ""domain"": ""Behavioral"",
+    ""subdomain"": ""Technology usage"",
+    ""questions"": [
+        ""Can you walk me through your typical evening routine, and how technology fits into it?"",
+        ""What's the first thing you do when you sit down to study? Is there a specific app or website that draws you in?"",
+        ""How does scrolling through social media or watching videos affect your mood and motivation to study?"",
+        ""Do you find yourself using technology as a way to avoid studying, or is it more of a distraction while you're trying to focus?"",
+        ""Can you think of any specific situations where you feel like you need to 'catch up' on something online before starting to study? What's driving that feeling?"",
+        ""How does the environment around you influence your technology usage? For example, do you prefer studying in a quiet space or with some background noise?"",
+        ""Are there any particular times of day when you find yourself reaching for your phone or computer more often than others?""
+    ]
+}",development,0.3333333333333333,question_generation,lite
+ETHNO-001,easy,6.8883,KEEP,1.0,9.1847856999957,"{""move_accuracy"": 0.8, ""contextual_continuity"": 0.9, ""novelty_without_repetition"": 0.6, ""open_endedness"": 0.7, ""atomicity"": 0.5, ""overall"": 0.75, ""reason"": ""The model accurately captures the context and provides a relevant question, but lacks specificity in its cues.""}",0.0,15,0.65,145,,,What are some things that you notice or feel before you start scrolling?,development,,rephrase,lite
+ETHNO-001,easy,1.7406,DEEPEN,1.0,5.279471900023054,"{""move_accuracy"": 0.8, ""contextual_continuity"": 0.9, ""novelty_without_repetition"": 0.6, ""open_endedness"": 0.4, ""atomicity"": 0.7, ""overall"": 0.65, ""reason"": ""The model accurately captures the context of automatic app opening in response to notifications, but lacks specificity and depth in its explanation.""}",0.5,14,0.69,144,,,What triggers you to automatically open the app when a notification arrives?,development,,rephrase,lite
+ETHNO-001,easy,1.4927,SHARPEN,1.0,5.239182499994058,"{""move_accuracy"": 0.8, ""contextual_continuity"": 0.9, ""novelty_without_repetition"": 0.7, ""open_endedness"": 0.6, ""atomicity"": 0.5, ""overall"": 0.75, ""reason"": ""The model accurately sharpened the expected move, but lacked atomicity and open-endedness.""}",1.0,19,0.85,146,,,How do you think late-night scrolling on your phone impacts the quality of your revision sessions?,development,,rephrase,lite

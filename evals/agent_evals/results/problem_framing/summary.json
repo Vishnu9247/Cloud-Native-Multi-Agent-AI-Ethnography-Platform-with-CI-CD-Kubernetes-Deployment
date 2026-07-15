@@ -1,0 +1,20 @@
+{
+  "agent": "problem_framing",
+  "rows": 32,
+  "variants": {
+    "deep": {
+      "row_count": 16,
+      "overall_score": 0.5974,
+      "format_valid_rate": 1.0,
+      "mean_elapsed_seconds": 6.3789,
+      "mean_output_tokens": 83.94
+    },
+    "lite": {
+      "row_count": 16,
+      "overall_score": 0.375,
+      "format_valid_rate": 0.5625,
+      "mean_elapsed_seconds": 5.6151,
+      "mean_output_tokens": 99.25
+    }
+  }
+}
