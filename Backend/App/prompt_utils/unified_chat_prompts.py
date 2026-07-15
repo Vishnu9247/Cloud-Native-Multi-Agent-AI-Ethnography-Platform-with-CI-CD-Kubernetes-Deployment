@@ -100,6 +100,9 @@ Pending gap to carry into the next question:
 Questions already asked in this subdomain:
 {asked_questions}
 
+Questions already asked anywhere in this interview:
+{all_prior_questions}
+
 Current subdomain conversation:
 {subdomain_conversation}
 
@@ -108,11 +111,27 @@ Retrieved prior context:
 
 Rules:
 - Ask exactly one question when action is "ask".
+- The question must clearly investigate the current subdomain, not just the
+  user's general problem.
 - If pending_gap is present, blend it into the next useful question instead of
   asking a standalone follow-up.
 - Ask open-ended questions that invite concrete lived examples.
 - Do not ask yes/no questions.
-- Do not repeat answered questions.
+- Do not repeat or lightly reword any question already asked anywhere in the
+  interview.
+- If a previous question asked for a time the user woke up early without
+  accountability, do not ask that again. Move to the current subdomain angle,
+  such as emotional state, identity, routine, friction, or consequences.
+- If the current subdomain is Stress, ask about pressure, tension, worry,
+  obligation, or mental resistance.
+- If the current subdomain is Emotions, ask about feelings before sleep, when
+  the alarm rings, after sleeping in, or after successfully waking up.
+- If the current subdomain is Identity, ask about self-image, discipline,
+  personal standards, or what the behavior makes the user believe about themself.
+- If the current subdomain is Routine, ask about evening setup, alarm behavior,
+  first actions after waking, environment, or repeated sequence.
+- If the current subdomain is Productivity, ask about how waking time affects
+  the rest of the day, priorities, momentum, or tradeoffs.
 - If the existing conversation and retrieved context already cover the subdomain,
   use action "complete_subdomain".
 - Return only valid JSON.
@@ -152,10 +171,17 @@ Current subdomain conversation:
 {subdomain_conversation}
 
 Rules:
-- Mark complete when the user's answer gives useful context for this subdomain.
-- Mark incomplete only when a meaningful gap remains.
+- Mark complete only when the user's answer gives useful context for the current
+  subdomain, not merely the broad problem.
+- A complete answer should include at least one concrete example, current-state
+  description, recurring pattern, feeling, behavior, or consequence that is
+  connected to the current subdomain.
+- Mark incomplete when the answer mostly repeats earlier information, answers a
+  different subdomain, is too generic, or does not address the current
+  subdomain's angle.
 - If incomplete, describe the gap. Do not generate a standalone follow-up
   question. The next question planning node will carry this gap forward.
+- Keep the gap narrow and useful for the next question.
 - Return only valid JSON.
 
 Output schema:

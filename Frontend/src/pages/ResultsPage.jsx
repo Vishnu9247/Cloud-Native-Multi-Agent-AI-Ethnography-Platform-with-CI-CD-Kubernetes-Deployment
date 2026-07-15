@@ -1,33 +1,10 @@
-import { useState } from "react";
-
-import { postDeleteCollection } from "../api/client.js";
-import { clearSessionState } from "../utils/session.js";
 import { normalizeTextList } from "../utils/text.js";
 
-export default function ResultsPage({ session, results, onEndSession }) {
-  const [isEnding, setIsEnding] = useState(false);
-  const [message, setMessage] = useState("");
-  const patterns = normalizeTextList(results?.patterns || results?.raw?.patterns);
-  const recommendations = normalizeTextList(results?.recommendations || results?.raw?.recommendations);
-
-  async function handleEndSession() {
-    if (isEnding) {
-      return;
-    }
-
-    setIsEnding(true);
-    setMessage("Ending session...");
-
-    try {
-      await postDeleteCollection({ session_id: session.session_id });
-      clearSessionState();
-      onEndSession();
-    } catch {
-      setMessage("The backend could not delete the session collection yet.");
-    } finally {
-      setIsEnding(false);
-    }
-  }
+export default function ResultsPage({ session, results, onStartNew }) {
+  const patterns = normalizeTextList(results?.patterns || results?.state?.patterns);
+  const recommendations = normalizeTextList(
+    results?.recommendations || results?.state?.recommendations,
+  );
 
   function handlePrint() {
     window.print();
@@ -42,11 +19,11 @@ export default function ResultsPage({ session, results, onEndSession }) {
           <p>{session.name}, here is what emerged from your interview.</p>
         </div>
         <div className="results-actions">
-          <button className="secondary-action" type="button" onClick={handlePrint}>
-            Print Results
+          <button className="secondary-button" type="button" onClick={handlePrint}>
+            Print
           </button>
-          <button className="danger-button" type="button" onClick={handleEndSession} disabled={isEnding}>
-            {isEnding ? "Ending..." : "End Session"}
+          <button className="primary-button compact" type="button" onClick={onStartNew}>
+            Start New Session
           </button>
         </div>
       </section>
@@ -78,10 +55,6 @@ export default function ResultsPage({ session, results, onEndSession }) {
           )}
         </article>
       </section>
-
-      <p className="status-text" aria-live="polite">
-        {message}
-      </p>
     </main>
   );
 }

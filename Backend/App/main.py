@@ -6,13 +6,13 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from App.api.routes.vector_store import router as vector_router
-from App.api.routes.audio import router as audio_router
 from App.api.routes.agent_one import router as problem_framing_router
 from App.api.routes.agent_two import router as domain_selection_router
 from App.api.routes.agent_three import router as interview_router
 from App.api.routes.agent_four import router as identify_patterns
 from App.api.routes.database import router as database_operations
-from App.database_utils.data_loader import ensure_database
+from App.api.routes.unified_chat import router as unified_chat_router
+from App.database_utils.storage_service import ensure_database
 from App.general_utils.logging_config import configure_logging, get_logger
 
 
@@ -20,6 +20,11 @@ configure_logging()
 logger = get_logger(__name__)
 
 app = FastAPI()
+
+try:
+    from App.api.routes.audio import router as audio_router
+except ModuleNotFoundError:
+    audio_router = None
 
 app.add_middleware(
     CORSMiddleware,
@@ -96,9 +101,11 @@ def health_check():
     return {"status": "ok"}
 
 app.include_router(vector_router, prefix = '/vector', tags = ['Vector Store'])
-app.include_router(audio_router, prefix = '/audio', tags = ['Audio'])
+if audio_router is not None:
+    app.include_router(audio_router, prefix = '/audio', tags = ['Audio'])
 app.include_router(problem_framing_router, prefix = '/agent', tags = ['Problem Framing Agent'])
 app.include_router(domain_selection_router, prefix = '/agent', tags = ['Domain Selection Agent'])
 app.include_router(interview_router, prefix= '/agent', tags= ['Interview Agent'])
 app.include_router(identify_patterns, prefix='/agent', tags = ['Pattern Identification'])
 app.include_router(database_operations, prefix= '/database', tags = ['Database'])
+app.include_router(unified_chat_router, prefix="/chat", tags=["Unified Chat"])

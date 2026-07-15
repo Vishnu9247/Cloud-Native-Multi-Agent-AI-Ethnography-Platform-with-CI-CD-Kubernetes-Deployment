@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from App.database_utils import postgres_service
+from App.database_utils import storage_service
 from App.rag_utils.chroma_service import (
     add_conversation_message,
     add_doc,
@@ -13,9 +13,9 @@ from App.unified_chat.schemas import QARecord, UnifiedChatState
 
 
 def initialize_session_storage(state: UnifiedChatState) -> None:
-    postgres_service.ensure_database()
+    storage_service.ensure_database()
     create_vector_store(state["session_id"])
-    postgres_service.upsert_session(
+    storage_service.upsert_session(
         session_id=state["session_id"],
         name=state["name"],
         age=state["age"],
@@ -26,7 +26,7 @@ def initialize_session_storage(state: UnifiedChatState) -> None:
 
 
 def persist_session_state(state: UnifiedChatState) -> None:
-    postgres_service.upsert_session(
+    storage_service.upsert_session(
         session_id=state["session_id"],
         name=state["name"],
         age=state["age"],
@@ -42,7 +42,7 @@ def persist_conversation_message(
     content: str,
     metadata: dict[str, Any] | None = None,
 ) -> None:
-    postgres_service.insert_conversation_message(
+    storage_service.insert_conversation_message(
         session_id=state["session_id"],
         role=role,
         content=content,
@@ -67,7 +67,7 @@ def persist_problem_statement(state: UnifiedChatState) -> None:
     if not problem_statement:
         return
 
-    postgres_service.update_session_problem(state["session_id"], problem_statement)
+    storage_service.update_session_problem(state["session_id"], problem_statement)
     add_problem(state["session_id"], problem_statement)
 
 
@@ -75,7 +75,7 @@ def persist_interview_turn(
     state: UnifiedChatState,
     qa: QARecord,
 ) -> None:
-    postgres_service.insert_interview_turn(
+    storage_service.insert_interview_turn(
         session_id=state["session_id"],
         domain=qa.get("domain", ""),
         subdomain=qa.get("subdomain", ""),
@@ -93,7 +93,7 @@ def persist_subdomain_summary(
     summary: str,
     evidence_quality: str | None = None,
 ) -> None:
-    postgres_service.upsert_subdomain_summary(
+    storage_service.upsert_subdomain_summary(
         session_id=state["session_id"],
         domain=domain,
         subdomain=subdomain,
@@ -111,7 +111,7 @@ def persist_subdomain_summary(
 
 
 def persist_results(state: UnifiedChatState) -> None:
-    postgres_service.upsert_session_results(
+    storage_service.upsert_session_results(
         session_id=state["session_id"],
         patterns=state.get("patterns", []),
         recommendations=state.get("recommendations", []),

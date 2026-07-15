@@ -1,83 +1,43 @@
 import { useState } from "react";
 
-import { postJson } from "../api/client.js";
-import { makeSessionId, storeSession } from "../utils/session.js";
+import { postCreateChatSession } from "../api/client.js";
 
 export default function WelcomePage({ onSessionReady }) {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
-  const [session, setSession] = useState(null);
-  const [syncMessage, setSyncMessage] = useState("");
-  const [isSyncing, setIsSyncing] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [message, setMessage] = useState("");
 
   const canCreate = name.trim().length > 0 && Number(age) > 0;
 
   async function handleCreateSession(event) {
     event.preventDefault();
 
-    if (!canCreate) {
+    if (!canCreate || isCreating) {
       return;
     }
 
-    const nextSession = {
-      name: name.trim(),
-      age: Number(age),
-      session_id: makeSessionId(name),
-    };
-
-    setSession(nextSession);
-    storeSession(nextSession);
-    setSyncMessage("");
-    setIsSyncing(true);
+    setIsCreating(true);
+    setMessage("Creating your session...");
 
     try {
-      await postJson("/vector/create", { session_id: nextSession.session_id });
-      setSyncMessage("Session synced with the backend.");
-    } catch {
-      setSyncMessage("Session created locally. Start the backend to sync it.");
+      const payload = await postCreateChatSession({
+        name: name.trim(),
+        age: Number(age),
+      });
+      onSessionReady(payload);
+    } catch (error) {
+      setMessage(error.message || "The backend could not create a session yet.");
     } finally {
-      setIsSyncing(false);
+      setIsCreating(false);
     }
-  }
-
-  if (session) {
-    return (
-      <main className="welcome-shell">
-        <section className="welcome-card" aria-labelledby="welcome-title">
-          <h1 id="welcome-title">Ethnography Assistant</h1>
-          <p className="subtitle">Welcome! Let's get started with your session.</p>
-
-          <div className="session-id-panel">
-            <span>Session ID:</span>
-            <strong>{session.session_id}</strong>
-          </div>
-
-          <div className="person-summary">
-            <p>
-              <strong>Name:</strong> {session.name}
-            </p>
-            <p>
-              <strong>Age:</strong> {session.age}
-            </p>
-          </div>
-
-          <button className="start-button" type="button" onClick={() => onSessionReady(session)}>
-            Let's Start
-          </button>
-
-          <p className="status-text" aria-live="polite">
-            {isSyncing ? "Creating backend session..." : syncMessage}
-          </p>
-        </section>
-      </main>
-    );
   }
 
   return (
     <main className="welcome-shell">
       <section className="welcome-card" aria-labelledby="welcome-title">
         <h1 id="welcome-title">Ethnography Assistant</h1>
-        <p className="subtitle">Welcome! Let's get started with your session.</p>
+        <p className="subtitle">Start with a few details, then continue in a guided chat.</p>
 
         <form onSubmit={handleCreateSession}>
           <label htmlFor="participant-name">Your Name</label>
@@ -101,10 +61,14 @@ export default function WelcomePage({ onSessionReady }) {
             onChange={(event) => setAge(event.target.value)}
           />
 
-          <button className="create-button" type="submit" disabled={!canCreate}>
-            Create Session
+          <button className="primary-button" type="submit" disabled={!canCreate || isCreating}>
+            {isCreating ? "Creating..." : "Create Session"}
           </button>
         </form>
+
+        <p className="status-text" aria-live="polite">
+          {message}
+        </p>
       </section>
     </main>
   );

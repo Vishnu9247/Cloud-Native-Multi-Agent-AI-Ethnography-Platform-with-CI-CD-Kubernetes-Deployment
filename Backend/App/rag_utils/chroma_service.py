@@ -40,7 +40,7 @@ def get_chroma_client():
         return _chroma_client
 
     _chroma_client = chromadb.PersistentClient(
-        path=os.getenv("CHROMA_PERSIST_PATH", "./App/chroma_db"),
+        path=os.getenv("CHROMA_PERSIST_PATH", "./App/local_chroma_db"),
         settings=_chroma_settings(),
     )
     return _chroma_client

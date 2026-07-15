@@ -14,4 +14,5 @@ temp/
 App/logs/
 App/*.db
 App/chroma_db/
+App/local_chroma_db/
 App/audio_utils/temp/

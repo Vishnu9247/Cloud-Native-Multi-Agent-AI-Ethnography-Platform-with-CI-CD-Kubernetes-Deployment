@@ -1,35 +1,25 @@
 import { useEffect, useState } from "react";
 
-import EndPage from "./pages/EndPage.jsx";
-import ExplorePage from "./pages/ExplorePage.jsx";
-import InterviewPage from "./pages/InterviewPage.jsx";
+import ChatPage from "./pages/ChatPage.jsx";
 import ResultsPage from "./pages/ResultsPage.jsx";
 import WelcomePage from "./pages/WelcomePage.jsx";
 import {
   clearSessionState,
-  readStoredExploration,
+  readStoredChatState,
   readStoredResults,
   readStoredSession,
-  storeExploration,
+  storeChatState,
   storeResults,
   storeSession,
 } from "./utils/session.js";
 
 function routeFromPathname(pathname) {
-  if (pathname === "/interview") {
-    return "interview";
-  }
-
-  if (pathname === "/explore") {
-    return "explore";
+  if (pathname === "/chat") {
+    return "chat";
   }
 
   if (pathname === "/results") {
     return "results";
-  }
-
-  if (pathname === "/ended") {
-    return "ended";
   }
 
   return "welcome";
@@ -43,7 +33,7 @@ function navigateTo(path, setRoute) {
 export default function App() {
   const [route, setRoute] = useState(() => routeFromPathname(window.location.pathname));
   const [session, setSession] = useState(() => readStoredSession());
-  const [exploration, setExploration] = useState(() => readStoredExploration());
+  const [chatState, setChatState] = useState(() => readStoredChatState());
   const [results, setResults] = useState(() => readStoredResults());
 
   useEffect(() => {
@@ -55,69 +45,60 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  function goToInterview(nextSession) {
+  function goToChat(payload) {
+    setSession(payload.session);
+    setChatState(payload.state);
+    setResults(null);
+    storeSession(payload.session);
+    storeChatState(payload.state);
+    navigateTo("/chat", setRoute);
+  }
+
+  function updateChatState(nextState) {
+    setChatState(nextState);
+    storeChatState(nextState);
+  }
+
+  function goToResults(payload) {
+    const nextSession = payload.session || session;
+    const nextResults = {
+      patterns: payload.patterns || payload.state?.patterns || [],
+      recommendations: payload.recommendations || payload.state?.recommendations || [],
+      state: payload.state,
+    };
+
     setSession(nextSession);
-    storeSession(nextSession);
-    navigateTo("/interview", setRoute);
-  }
-
-  function goToWelcome() {
-    navigateTo("/", setRoute);
-  }
-
-  function goToExplore(nextExploration) {
-    setExploration(nextExploration);
-    storeExploration(nextExploration);
-    navigateTo("/explore", setRoute);
-  }
-
-  function goToResults(nextResults) {
+    setChatState(payload.state);
     setResults(nextResults);
+    storeSession(nextSession);
+    storeChatState(payload.state);
     storeResults(nextResults);
     navigateTo("/results", setRoute);
-  }
-
-  function goBackToInterview() {
-    navigateTo("/interview", setRoute);
-  }
-
-  function goToEnded() {
-    setSession(null);
-    setExploration(null);
-    setResults(null);
-    navigateTo("/ended", setRoute);
   }
 
   function startNewSession() {
     clearSessionState();
     setSession(null);
-    setExploration(null);
+    setChatState(null);
     setResults(null);
     navigateTo("/", setRoute);
   }
 
-  if (route === "ended") {
-    return <EndPage onStartNew={startNewSession} />;
-  }
-
-  if (route === "results" && session && results) {
-    return <ResultsPage session={session} results={results} onEndSession={goToEnded} />;
-  }
-
-  if (route === "explore" && session) {
+  if (route === "chat" && session && chatState) {
     return (
-      <ExplorePage
+      <ChatPage
         session={session}
-        exploration={exploration}
-        onBack={goBackToInterview}
+        chatState={chatState}
+        onStateChange={updateChatState}
         onResults={goToResults}
+        onStartNew={startNewSession}
       />
     );
   }
 
-  if (route === "interview" && session) {
-    return <InterviewPage session={session} onBack={goToWelcome} onExplore={goToExplore} />;
+  if (route === "results" && session && results) {
+    return <ResultsPage session={session} results={results} onStartNew={startNewSession} />;
   }
 
-  return <WelcomePage onSessionReady={goToInterview} />;
+  return <WelcomePage onSessionReady={goToChat} />;
 }

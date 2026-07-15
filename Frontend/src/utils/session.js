@@ -1,17 +1,6 @@
 const SESSION_STORAGE_KEY = "ethnography-assistant-session";
-const EXPLORATION_STORAGE_KEY = "ethnography-assistant-exploration";
+const CHAT_STATE_STORAGE_KEY = "ethnography-assistant-chat-state";
 const RESULTS_STORAGE_KEY = "ethnography-assistant-results";
-
-export function makeSessionId(name) {
-  const cleanName = name
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-  const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
-
-  return `${cleanName || "guest"}_${timestamp}`;
-}
 
 function readStoredValue(key) {
   try {
@@ -34,12 +23,12 @@ export function storeSession(session) {
   storeValue(SESSION_STORAGE_KEY, session);
 }
 
-export function readStoredExploration() {
-  return readStoredValue(EXPLORATION_STORAGE_KEY);
+export function readStoredChatState() {
+  return readStoredValue(CHAT_STATE_STORAGE_KEY);
 }
 
-export function storeExploration(exploration) {
-  storeValue(EXPLORATION_STORAGE_KEY, exploration);
+export function storeChatState(state) {
+  storeValue(CHAT_STATE_STORAGE_KEY, state);
 }
 
 export function readStoredResults() {
@@ -52,6 +41,6 @@ export function storeResults(results) {
 
 export function clearSessionState() {
   window.sessionStorage.removeItem(SESSION_STORAGE_KEY);
-  window.sessionStorage.removeItem(EXPLORATION_STORAGE_KEY);
+  window.sessionStorage.removeItem(CHAT_STATE_STORAGE_KEY);
   window.sessionStorage.removeItem(RESULTS_STORAGE_KEY);
 }

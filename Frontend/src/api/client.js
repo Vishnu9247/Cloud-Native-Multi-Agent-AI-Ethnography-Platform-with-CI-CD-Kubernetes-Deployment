@@ -18,6 +18,18 @@ export async function postJson(path, body) {
   return text ? JSON.parse(text) : null;
 }
 
+export function postCreateChatSession(body) {
+  return postJson("/chat/session", body);
+}
+
+export function postChatMessage(body) {
+  return postJson("/chat/message", body);
+}
+
+export function postChatResults(body) {
+  return postJson("/chat/results", body);
+}
+
 export async function postProblemFraming(body) {
   try {
     return await postJson("/agent/problem-framing", body);

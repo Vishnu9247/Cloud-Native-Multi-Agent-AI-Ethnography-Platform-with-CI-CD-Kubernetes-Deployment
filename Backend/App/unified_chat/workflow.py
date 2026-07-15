@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import uuid
 from copy import deepcopy
+from difflib import SequenceMatcher
 from typing import Any, TypeVar
 
 from langgraph.graph import END, StateGraph
@@ -207,6 +208,96 @@ def _format_qas(qas: list[QARecord]) -> str:
             )
         )
     return "\n\n".join(blocks)
+
+
+def _question_texts(qas: list[QARecord], limit: int | None = None) -> list[str]:
+    questions = [
+        qa.get("question", "").strip()
+        for qa in qas
+        if qa.get("question", "").strip()
+    ]
+    if limit is None:
+        return questions
+    return questions[-limit:]
+
+
+def _normalize_question_text(question: str) -> str:
+    return " ".join(
+        "".join(
+            character.lower() if character.isalnum() or character.isspace() else " "
+            for character in question
+        ).split()
+    )
+
+
+def _is_repetitive_question(question: str, previous_questions: list[str]) -> bool:
+    normalized_question = _normalize_question_text(question)
+    if not normalized_question:
+        return False
+
+    for previous_question in previous_questions:
+        normalized_previous = _normalize_question_text(previous_question)
+        if not normalized_previous:
+            continue
+
+        if normalized_question == normalized_previous:
+            return True
+
+        similarity = SequenceMatcher(
+            None,
+            normalized_question,
+            normalized_previous,
+        ).ratio()
+        if similarity >= 0.64:
+            return True
+
+    return False
+
+
+def _fallback_question_for_subdomain(
+    subdomain: str,
+    pending_gap: str = "",
+) -> str:
+    subdomain_key = subdomain.strip().lower()
+    questions = {
+        "stress": (
+            "When the alarm rings on a morning without obligations, what kind "
+            "of pressure, tension, or mental resistance do you notice?"
+        ),
+        "emotions": (
+            "What emotions show up before bed and right after the alarm when "
+            "you know no one is waiting for you?"
+        ),
+        "identity": (
+            "What does waking up early, or not waking up early, make you "
+            "believe about yourself?"
+        ),
+        "routine": (
+            "Walk me through the last hour before sleep and the first ten "
+            "minutes after your alarm on days you sleep in."
+        ),
+        "productivity": (
+            "How does waking up late change what you do next, and how does "
+            "that affect the rest of your day?"
+        ),
+        "motivation": (
+            "What usually makes waking up early feel worth it to you, and what "
+            "makes that reason fade after a few days?"
+        ),
+        "goals": (
+            "What larger goal do you connect with waking up early, and how "
+            "clear does that goal feel when the alarm actually rings?"
+        ),
+    }
+    base_question = questions.get(
+        subdomain_key,
+        f"What part of {subdomain.lower()} most affects this problem in your day-to-day life?",
+    )
+
+    if pending_gap:
+        return f"Keeping this gap in mind: {pending_gap} {base_question}"
+
+    return base_question
 
 
 def _compact_json(value: Any) -> str:
@@ -516,9 +607,8 @@ def prepare_next_question_node(state: UnifiedChatState) -> UnifiedChatState:
         if not domain or not subdomain:
             return _mark_ready_for_results(state)
 
-        asked_questions = [
-            qa.get("question", "") for qa in state["active_subdomain_qas"]
-        ]
+        asked_questions = _question_texts(state["active_subdomain_qas"])
+        all_prior_questions = _question_texts(state["qa_history"], limit=16)
         query = "\n".join(
             [
                 state["problem_statement"],
@@ -535,6 +625,7 @@ def prepare_next_question_node(state: UnifiedChatState) -> UnifiedChatState:
             subdomain=subdomain,
             pending_gap=state.get("pending_gap") or "No pending gap.",
             asked_questions=_compact_json(asked_questions),
+            all_prior_questions=_compact_json(all_prior_questions),
             subdomain_conversation=_format_qas(state["active_subdomain_qas"]),
             retrieved_context=_compact_json(context),
         )
@@ -544,7 +635,10 @@ def prepare_next_question_node(state: UnifiedChatState) -> UnifiedChatState:
             QuestionPlanOutput,
             QuestionPlanOutput(
                 action="ask",
-                question=f"Can you tell me how {subdomain.lower()} connects to this problem in your day-to-day life?",
+                question=_fallback_question_for_subdomain(
+                    subdomain,
+                    state.get("pending_gap", ""),
+                ),
                 reason="Fallback question.",
                 carries_gap=state.get("pending_gap", ""),
             ),
@@ -558,10 +652,14 @@ def prepare_next_question_node(state: UnifiedChatState) -> UnifiedChatState:
             continue
 
         question = output.question.strip()
-        if not question:
-            question = (
-                f"Can you tell me how {subdomain.lower()} connects to this "
-                "problem in your day-to-day life?"
+        if not question or _is_repetitive_question(question, all_prior_questions):
+            question = _fallback_question_for_subdomain(
+                subdomain,
+                state.get("pending_gap", ""),
+            )
+            output.reason = (
+                "Fallback question used because the generated question was "
+                "empty or too similar to a prior question."
             )
 
         state["current_question"] = question
